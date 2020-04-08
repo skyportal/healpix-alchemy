@@ -23,24 +23,19 @@ class UnitSphericalCoordinate:
 
 
 def _to_cartesian(lon, lat):
-    return [cosd(lon) * cosd(lat),
-            sind(lon) * cosd(lat),
-            sind(lat)]
+    return cosd(lon) * cosd(lat), sind(lon) * cosd(lat), sind(lat)
 
 
 class UnitSphericalCoordinateComparator(CompositeProperty.Comparator):
-
-    def cartesian(self):
-        return _to_cartesian(*self.__clause_element__().clauses)
 
     def within(self, other, radius):
         sin_radius = sind(radius)
         lonlats = (self.__clause_element__().clauses,
                    other.__composite_values__())
-        carts = list(zip(*_to_cartesian(*lonlat) for lon_lat in lon_lats))
+        carts = list(zip(*(_to_cartesian(*lonlat) for lonlat in lonlats)))
         return and_(*(lhs.between(rhs - sin_radius, rhs + sin_radius)
                       for lhs, rhs in carts),
-                    sum(lhs * rhs for lhs, rhs in cart) <= sin_radius)
+                    sum(lhs * rhs for lhs, rhs in carts) <= sin_radius)
 
 
 class HasUnitSphericalCoordinate:
@@ -48,9 +43,10 @@ class HasUnitSphericalCoordinate:
     lon = Column(Float, nullable=False)
     lat = Column(Float, nullable=False)
 
-    coordinate = composite(
-        UnitSphericalCoordinate, lon, lat,
-        comparator_factory=UnitSphericalCoordinateComparator)
+    @declared_attr
+    def coordinate(cls):
+        return composite(UnitSphericalCoordinate, cls.lon, cls.lat,
+                         comparator_factory=UnitSphericalCoordinateComparator)
 
     @declared_attr
     def __table_args__(cls):
@@ -58,7 +54,6 @@ class HasUnitSphericalCoordinate:
             args = super().__table_args__
         except AttributeError:
             args = ()
-        coord = cls.coordinate
         args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
-                      for k, v in zip('xyz', coord.cartesian)
+                      for k, v in zip('xyz', _to_cartesian(cls.lon, cls.lat)))
         return args
