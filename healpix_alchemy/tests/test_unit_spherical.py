@@ -7,7 +7,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import sessionmaker
 
-from ..unit_spherical import HasUnitSphericalCoordinate
+from ..unit_spherical import (HasUnitSphericalCoordinate,
+                              UnitSphericalCoordinate)
 
 
 Base = declarative_base()
@@ -59,9 +60,10 @@ def test_unit_spherical(postgresql_engine):
     lats = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
 
     # Commit to database
-    for model, lons_, lats_ in zip([Point1, Point2], lons, lats):
+    for model_cls, lons_, lats_ in zip([Point1, Point2], lons, lats):
         for i, (lon, lat) in enumerate(zip(lons_, lats_)):
-            session.add(model(id=i, lon=lon, lat=lat))
+            row = model_cls(id=i, coordinate=UnitSphericalCoordinate(lon, lat))
+            session.add(row)
     session.commit()
 
     # Find all matches within :var:`separation` degrees
