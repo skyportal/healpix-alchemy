@@ -1,17 +1,84 @@
+import itertools
+
+from astropy.coordinates import SkyCoord
+from astropy import units as u
+import numpy as np
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
+from sqlalchemy.orm import sessionmaker
 
-from ..unit_spherical import (UnitSphericalCoordinate,
-                              HasUnitSphericalCoordinate)
+from ..unit_spherical import HasUnitSphericalCoordinate
 
 
 Base = declarative_base()
 
 
-class Points(HasUnitSphericalCoordinate, Base):
-    __tablename__ = 'points'
+class Point1(HasUnitSphericalCoordinate, Base):
+    __tablename__ = 'points1'
     id = Column(Integer, primary_key=True)
+
+
+class Point2(HasUnitSphericalCoordinate, Base):
+    __tablename__ = 'points2'
+    id = Column(Integer, primary_key=True)
+
+
+def match_sky(coords1, coords2, separation):
+    """Get all matches between SkyCoord objects, not just nearest neighbors.
+
+    The :meth:`astropy.coordinates.SkyCoord.match_to_catalog_sky` method only
+    returns the `n`th neighbor for one value of `n` at a time. This method
+    returns all matches.
+    """
+    nresults = 0
+    results = np.empty((0, 2), dtype=np.intp)
+    id1 = np.arange(len(coords1))
+
+    for n in itertools.count(1):
+        id2, sep, _ = coords1.match_to_catalog_sky(coords2, nthneighbor=n)
+        new_results = np.column_stack((id1, id2))[sep <= separation]
+        results = np.row_stack((results, new_results))
+        if len(results) > 0:
+            results = np.unique(results, axis=0)
+        new_nresults = len(results)
+        if new_nresults == nresults:
+            return results
+        nresults = new_nresults
 
 
 def test_unit_spherical(postgresql_engine):
     Base.metadata.create_all(postgresql_engine)
+    Session = sessionmaker(bind=postgresql_engine)
+    session = Session()
+
+    separation = 10  # degrees
+
+    # Generate two random point clouds
+    n = 100
+    lons = np.random.uniform(0, 360, (2, n))
+    lats = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
+
+    # Commit to database
+    for model, lons_, lats_ in zip([Point1, Point2], lons, lats):
+        for i, (lon, lat) in enumerate(zip(lons_, lats_)):
+            session.add(model(id=i, lon=lon, lat=lat))
+    session.commit()
+
+    # Find all matches within :var:`separation` degrees
+    query = session.query(
+        Point1.id, Point2.id
+    ).join(
+        Point2,
+        Point1.coordinate.within(Point2.coordinate, separation)
+    ).order_by(
+        Point1.id, Point2.id
+    )
+    matches = np.asarray(query.all()).reshape(-1, 2)
+
+    # Find all matches using Astropy
+    coords1, coords2 = (SkyCoord(lons_, lats_, unit=(u.deg, u.deg))
+                        for lons_, lats_ in zip(lons, lats))
+    expected_matches = match_sky(coords1, coords2, separation * u.deg)
+
+    # Compare SQLAlchemy result to Astropy
+    np.testing.assert_array_equal(matches, expected_matches)

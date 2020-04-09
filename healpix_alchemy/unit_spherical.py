@@ -28,14 +28,16 @@ def _to_cartesian(lon, lat):
 
 class UnitSphericalCoordinateComparator(CompositeProperty.Comparator):
 
+    def cartesian(self):
+        return _to_cartesian(*self.__clause_element__().clauses)
+
     def within(self, other, radius):
         sin_radius = sind(radius)
-        lonlats = (self.__clause_element__().clauses,
-                   other.__composite_values__())
-        carts = list(zip(*(_to_cartesian(*lonlat) for lonlat in lonlats)))
-        return and_(*(lhs.between(rhs - sin_radius, rhs + sin_radius)
+        cos_radius = cosd(radius)
+        carts = list(zip(*(obj.cartesian() for obj in (self, other))))
+        return and_(*(lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius)
                       for lhs, rhs in carts),
-                    sum(lhs * rhs for lhs, rhs in carts) <= sin_radius)
+                    sum(lhs * rhs for lhs, rhs in carts) >= cos_radius)
 
 
 class HasUnitSphericalCoordinate:

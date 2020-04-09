@@ -11,9 +11,11 @@ sqlalchemy = "*"
 astropy = "*"
 
 [tool.poetry.dev-dependencies]
+numpy = "*"
 psycopg2-binary = "*"
 pytest = "*"
 pytest-postgresql = "*"
+scipy = "*"
 
 [build-system]
 requires = ["poetry>=0.12"]
