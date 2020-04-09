@@ -11,7 +11,7 @@ sqlalchemy = "*"
 astropy = "*"
 
 [tool.poetry.dev-dependencies]
-psycopg2-binary="*"
+psycopg2-binary = "*"
 pytest = "*"
 pytest-postgresql = "*"
 
