@@ -86,3 +86,16 @@ def test_cone_search(benchmark, session, point_clouds):
             Point1.id
         ).all()
     benchmark(do_query)
+
+
+def test_cone_search_literal(benchmark, session, point_clouds):
+    target = UnitSphericalCoordinate(100.0, 20.0)
+    def do_query():
+        return session.query(
+            Point1.id
+        ).filter(
+            Point1.coordinate.within(target, 1)
+        ).order_by(
+            Point1.id
+        ).all()
+    benchmark(do_query)
