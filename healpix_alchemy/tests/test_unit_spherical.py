@@ -9,8 +9,8 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm import aliased, sessionmaker
 import pytest
 
-from ..unit_spherical import (HasUnitSphericalCoordinate,
-                              UnitSphericalCoordinate)
+from ..unit_spherical import HasUnitSphericalCoordinate
+
 
 
 Base = declarative_base()
@@ -68,7 +68,7 @@ def point_clouds(request, session):
     # Commit to database
     for model_cls, lons_, lats_ in zip([Point1, Point2], lons, lats):
         for i, (lon, lat) in enumerate(zip(lons_, lats_)):
-            row = model_cls(id=i, coordinate=UnitSphericalCoordinate(lon, lat))
+            row = model_cls(id=i, lon=lon, lat=lat)
             session.add(row)
     session.commit()
 
@@ -85,7 +85,7 @@ def test_cross_join(benchmark, session, point_clouds):
             Point1.id, Point2.id
         ).join(
             Point2,
-            Point1.coordinate.within(Point2.coordinate, separation)
+            Point1.within(Point2, separation)
         ).order_by(
             Point1.id, Point2.id
         ).all()
@@ -109,7 +109,7 @@ def test_self_join(benchmark, session, point_clouds):
             table1.id, table2.id
         ).join(
             table2,
-            table1.coordinate.within(table2.coordinate, 1)
+            table1.within(table2, 1)
         ).order_by(
             table1.id, table2.id
         ).all()
@@ -124,7 +124,7 @@ def test_cone_search(benchmark, session, point_clouds):
             table1.id, table2.id
         ).join(
             table2,
-            table1.coordinate.within(table2.coordinate, 1)
+            table1.within(table2, 1)
         ).filter(
             table1.id == 0
         ).order_by(
