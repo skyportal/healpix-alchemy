@@ -56,7 +56,7 @@ def session(postgresql_engine):
     return Session()
 
 
-@pytest.fixture(params=[10, 100, 1000, 10000])
+@pytest.fixture(params=[100])
 def point_clouds(request, session):
     # Generate two random point clouds
     n = request.param
