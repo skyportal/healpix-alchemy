@@ -1,8 +1,5 @@
-from dataclasses import astuple, dataclass
-
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm.properties import CompositeProperty
-from sqlalchemy.orm import composite
+from sqlalchemy.ext.hybrid import Comparator, hybrid_property
 from sqlalchemy.schema import Column, Index
 from sqlalchemy.sql import and_
 from sqlalchemy.types import Float
@@ -12,25 +9,17 @@ from .math import sind, cosd
 __all__ = ('UnitSphericalCoordinate', 'HasUnitSphericalCoordinate')
 
 
-@dataclass
-class UnitSphericalCoordinate:
+class UnitSphericalCoordinate(Comparator):
 
-    lon: float  # longitude in degrees
-    lat: float  # latitude in degrees
-
-    def __composite_values__(self):
-        return astuple(self)
-
-
-def _to_cartesian(lon, lat):
-    return cosd(lon) * cosd(lat), sind(lon) * cosd(lat), sind(lat)
-
-
-class UnitSphericalCoordinateComparator(CompositeProperty.Comparator):
+    def __init__(self, lon, lat):
+        self.lon = lon
+        self.lat = lat
 
     @property
     def cartesian(self):
-        return _to_cartesian(*self.__clause_element__().clauses)
+        return (cosd(self.lon) * cosd(self.lat),
+                sind(self.lon) * cosd(self.lat),
+                sind(self.lat))
 
     def within(self, other, radius):
         sin_radius = sind(radius)
@@ -47,10 +36,14 @@ class HasUnitSphericalCoordinate:
     lon = Column(Float, nullable=False)
     lat = Column(Float, nullable=False)
 
-    @declared_attr
-    def coordinate(cls):
-        return composite(UnitSphericalCoordinate, cls.lon, cls.lat,
-                         comparator_factory=UnitSphericalCoordinateComparator)
+    @hybrid_property
+    def coordinate(self):
+        return UnitSphericalCoordinate(self.lon, self.lat)
+
+    @coordinate.setter
+    def coordinate(self, value):
+        self.lon = value.lon
+        self.lat = value.lat
 
     @declared_attr
     def __table_args__(cls):
@@ -59,5 +52,5 @@ class HasUnitSphericalCoordinate:
         except AttributeError:
             args = ()
         args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
-                      for k, v in zip('xyz', _to_cartesian(cls.lon, cls.lat)))
+                      for k, v in zip('xyz', cls.coordinate.cartesian))
         return args

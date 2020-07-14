@@ -116,19 +116,30 @@ def test_self_join(benchmark, session, point_clouds):
 
 
 def test_cone_search(benchmark, session, point_clouds):
+    target = session.query(Point1).get(0)
 
     def do_query():
-        table1 = aliased(Point1)
-        table2 = aliased(Point2)
         return session.query(
-            table1.id, table2.id
-        ).join(
-            table2,
-            table1.coordinate.within(table2.coordinate, SEPARATION)
+            Point1.id
         ).filter(
-            table1.id == 0
+            Point1.coordinate.within(target.coordinate, SEPARATION)
         ).order_by(
-            table2.id
+            Point1.id
+        ).all()
+
+    benchmark(do_query)
+
+
+def test_cone_search_literal(benchmark, session, point_clouds):
+    target = UnitSphericalCoordinate(100.0, 20.0)
+
+    def do_query():
+        return session.query(
+            Point1.id
+        ).filter(
+            Point1.coordinate.within(target, SEPARATION)
+        ).order_by(
+            Point1.id
         ).all()
 
     benchmark(do_query)
