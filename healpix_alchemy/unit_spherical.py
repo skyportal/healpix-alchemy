@@ -11,15 +11,15 @@ __all__ = ('UnitSphericalCoordinate', 'HasUnitSphericalCoordinate')
 
 class UnitSphericalCoordinate(Comparator):
 
-    def __init__(self, lon, lat):
-        self._lon = lon
-        self._lat = lat
+    def __init__(self, ra, dec):
+        self._ra = ra
+        self._dec = dec
 
     @property
     def cartesian(self):
-        return (cosd(self._lon) * cosd(self._lat),
-                sind(self._lon) * cosd(self._lat),
-                sind(self._lat))
+        return (cosd(self._ra) * cosd(self._dec),
+                sind(self._ra) * cosd(self._dec),
+                sind(self._dec))
 
     def within(self, other, radius):
         sin_radius = sind(radius)
@@ -33,17 +33,17 @@ class UnitSphericalCoordinate(Comparator):
 
 class HasUnitSphericalCoordinate:
 
-    lon = Column(Float, nullable=False)
-    lat = Column(Float, nullable=False)
+    ra = Column(Float, nullable=False)
+    dec = Column(Float, nullable=False)
 
     @hybrid_property
     def coordinate(self):
-        return UnitSphericalCoordinate(self.lon, self.lat)
+        return UnitSphericalCoordinate(self.ra, self.dec)
 
     @coordinate.setter
     def coordinate(self, value):
-        self.lon = value._lon
-        self.lat = value._lat
+        self.ra = value._ra
+        self.dec = value._dec
 
     @declared_attr
     def __table_args__(cls):

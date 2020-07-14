@@ -57,24 +57,24 @@ def point_clouds(request, session, engine):
     n = request.param
 
     with NumpyRNGContext(8675309):
-        lons = np.random.uniform(0, 360, (2, n))
-        lats = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
+        ras = np.random.uniform(0, 360, (2, n))
+        decs = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
 
     # Commit to database
-    for model_cls, lons_, lats_ in zip([Point1, Point2], lons, lats):
-        for i, (lon, lat) in enumerate(zip(lons_, lats_)):
-            row = model_cls(id=i, coordinate=UnitSphericalCoordinate(lon, lat))
+    for model_cls, ras_, decs_ in zip([Point1, Point2], ras, decs):
+        for i, (ra, dec) in enumerate(zip(ras_, decs_)):
+            row = model_cls(id=i, coordinate=UnitSphericalCoordinate(ra, dec))
             session.add(row)
     session.commit()
 
-    return lons, lats
+    return ras, decs
 
 
 SEPARATION = 1  # Separation in degrees for unit tests below
 
 
 def test_cross_join(benchmark, session, point_clouds):
-    lons, lats = point_clouds
+    ras, decs = point_clouds
 
     def do_query():
         return session.query(
@@ -90,8 +90,8 @@ def test_cross_join(benchmark, session, point_clouds):
     matches = np.asarray(result).reshape(-1, 2)
 
     # Find all matches using Astropy
-    coords1, coords2 = (SkyCoord(lons_, lats_, unit=(u.deg, u.deg))
-                        for lons_, lats_ in zip(lons, lats))
+    coords1, coords2 = (SkyCoord(ras_, decs_, unit=(u.deg, u.deg))
+                        for ras_, decs_ in zip(ras, decs))
     expected_matches = match_sky(coords1, coords2, SEPARATION * u.deg)
 
     # Compare SQLAlchemy result to Astropy
