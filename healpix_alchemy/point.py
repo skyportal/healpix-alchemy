@@ -18,11 +18,33 @@ class Point(Comparator):
 
     @property
     def cartesian(self):
+        """Convert to Cartesian coordinates.
+
+        Returns
+        -------
+        x, y, z : float
+            A tuple of the x, y, and z coordinates.
+
+        """
         return (cosd(self._ra) * cosd(self._dec),
                 sind(self._ra) * cosd(self._dec),
                 sind(self._dec))
 
     def within(self, other, radius):
+        """Test if this point is within a given radius of another point.
+
+        Parameters
+        ----------
+        other : Point
+            The other point.
+        radius : float
+            The match radius in degrees.
+
+        Returns
+        -------
+        bool
+
+        """
         sin_radius = sind(radius)
         cos_radius = cosd(radius)
         carts = (obj.cartesian for obj in (self, other))
@@ -33,6 +55,7 @@ class Point(Comparator):
 
 
 class HasPoint:
+    """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
     ra = Column(Float, nullable=False)
     dec = Column(Float, nullable=False)
