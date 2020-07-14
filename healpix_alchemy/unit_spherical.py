@@ -8,7 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_method
 
 from .math import sind, cosd
 
-__all__ = ('HasUnitSphericalCoordinate',)
+__all__ = ('HasUnitSphericalCoordinate', 'HasRADec')
 
 
 def _to_cartesian(lon, lat):
