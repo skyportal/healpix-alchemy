@@ -7,7 +7,7 @@ from sqlalchemy.types import Float
 
 from .math import sind, cosd
 
-__all__ = ('Point', 'HasPoint')
+__all__ = ('Point', 'HasPoint', 'HasPointNullable')
 
 
 class Point(Comparator):
@@ -54,27 +54,34 @@ class Point(Comparator):
         return and_(*bounding_box_terms, sum(dot_product_terms) >= cos_radius)
 
 
-class HasPoint:
-    """Mixin class to add a point to a an SQLAlchemy declarative model."""
+def point_factory(nullable=False):
+    
+    class _HasPoint:
+        """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
-    ra = Column(Float, nullable=True)
-    dec = Column(Float, nullable=True)
+        ra = Column(Float, nullable=nullable)
+        dec = Column(Float, nullable=nullable)
 
-    @hybrid_property
-    def point(self):
-        return Point(self.ra, self.dec)
+        @hybrid_property
+        def point(self):
+            return Point(self.ra, self.dec)
 
-    @point.setter
-    def point(self, value):
-        self.ra = value._ra
-        self.dec = value._dec
+        @point.setter
+        def point(self, value):
+            self.ra = value._ra
+            self.dec = value._dec
 
-    @declared_attr
-    def __table_args__(cls):
-        try:
-            args = super().__table_args__
-        except AttributeError:
-            args = ()
-        args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
-                      for k, v in zip('xyz', cls.point.cartesian))
-        return args
+        @declared_attr
+        def __table_args__(cls):
+            try:
+                args = super().__table_args__
+            except AttributeError:
+                args = ()
+            args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
+                          for k, v in zip('xyz', cls.point.cartesian))
+            return args
+
+    return _HasPoint
+
+HasPoint = point_factory()
+HasPointNullable = point_factory(nullable=True)
