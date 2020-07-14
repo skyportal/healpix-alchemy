@@ -6,7 +6,7 @@ from astropy.utils.misc import NumpyRNGContext
 import numpy as np
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
-from sqlalchemy.orm import aliased, sessionmaker
+from sqlalchemy.orm import aliased
 import pytest
 
 from ..unit_spherical import (HasUnitSphericalCoordinate,
@@ -49,16 +49,11 @@ def match_sky(coords1, coords2, separation):
         nresults = new_nresults
 
 
-@pytest.fixture
-def session(postgresql_engine):
-    Base.metadata.create_all(postgresql_engine)
-    Session = sessionmaker(bind=postgresql_engine)
-    return Session()
-
-
 @pytest.fixture(params=[10, 100, 1000, 10000])
-def point_clouds(request, session):
+def point_clouds(request, session, engine):
     """Generate two random point clouds."""
+    Base.metadata.create_all(engine)
+
     n = request.param
 
     with NumpyRNGContext(8675309):
