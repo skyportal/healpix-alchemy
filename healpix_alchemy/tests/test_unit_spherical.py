@@ -75,6 +75,23 @@ def point_clouds(request, session):
     return lons, lats
 
 
+def test_cone_search_orig(benchmark, session, point_clouds):
+    def do_query():
+        table1 = aliased(Point1)
+        table2 = aliased(Point2)
+        return session.query(
+            table1.id, table2.id
+        ).join(
+            table2,
+            table1.coordinate.within(table2.coordinate, 1)
+        ).filter(
+            table1.id == 0
+        ).order_by(
+            table2.id
+        ).all()
+    benchmark(do_query)
+
+
 def test_cone_search(benchmark, session, point_clouds):
     target = session.query(Point1).get(0)
     def do_query():
