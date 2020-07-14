@@ -16,10 +16,6 @@ You can install `healpix_alchemy` the Python Package Index:
 
     $ pip install healpix-alchemy
 
-Or from GitHub:
-
-    $ pip install git+https://github.com/skyportal/healpix-alchemy
-
 ## Usage
 
 ```python
