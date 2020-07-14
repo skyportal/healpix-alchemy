@@ -2,10 +2,12 @@ import itertools
 
 from astropy.coordinates import SkyCoord
 from astropy import units as u
+from astropy.utils.misc import NumpyRNGContext
 import numpy as np
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import aliased, sessionmaker
+import pytest
 
 from ..unit_spherical import (HasUnitSphericalCoordinate,
                               UnitSphericalCoordinate)
@@ -47,17 +49,21 @@ def match_sky(coords1, coords2, separation):
         nresults = new_nresults
 
 
-def test_unit_spherical(postgresql_engine):
+@pytest.fixture
+def session(postgresql_engine):
     Base.metadata.create_all(postgresql_engine)
     Session = sessionmaker(bind=postgresql_engine)
-    session = Session()
+    return Session()
 
-    separation = 10  # degrees
 
+@pytest.fixture(params=[10, 100, 1000, 10000])
+def point_clouds(request, session):
     # Generate two random point clouds
-    n = 100
-    lons = np.random.uniform(0, 360, (2, n))
-    lats = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
+    n = request.param
+
+    with NumpyRNGContext(8675309):
+        lons = np.random.uniform(0, 360, (2, n))
+        lats = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
 
     # Commit to database
     for model_cls, lons_, lats_ in zip([Point1, Point2], lons, lats):
@@ -66,16 +72,25 @@ def test_unit_spherical(postgresql_engine):
             session.add(row)
     session.commit()
 
+    return lons, lats
+
+
+def test_cross_join(benchmark, session, point_clouds):
+    separation = 1  # degrees
+    lons, lats = point_clouds
+
     # Find all matches within :var:`separation` degrees
-    query = session.query(
-        Point1.id, Point2.id
-    ).join(
-        Point2,
-        Point1.coordinate.within(Point2.coordinate, separation)
-    ).order_by(
-        Point1.id, Point2.id
-    )
-    matches = np.asarray(query.all()).reshape(-1, 2)
+    def do_query():
+        return session.query(
+            Point1.id, Point2.id
+        ).join(
+            Point2,
+            Point1.coordinate.within(Point2.coordinate, separation)
+        ).order_by(
+            Point1.id, Point2.id
+        ).all()
+    result = benchmark(do_query)
+    matches = np.asarray(result).reshape(-1, 2)
 
     # Find all matches using Astropy
     coords1, coords2 = (SkyCoord(lons_, lats_, unit=(u.deg, u.deg))
@@ -84,3 +99,35 @@ def test_unit_spherical(postgresql_engine):
 
     # Compare SQLAlchemy result to Astropy
     np.testing.assert_array_equal(matches, expected_matches)
+
+
+def test_self_join(benchmark, session, point_clouds):
+    def do_query():
+        table1 = aliased(Point1)
+        table2 = aliased(Point2)
+        return session.query(
+            table1.id, table2.id
+        ).join(
+            table2,
+            table1.coordinate.within(table2.coordinate, 1)
+        ).order_by(
+            table1.id, table2.id
+        ).all()
+    benchmark(do_query)
+
+
+def test_self_join(benchmark, session, point_clouds):
+    def do_query():
+        table1 = aliased(Point1)
+        table2 = aliased(Point2)
+        return session.query(
+            table1.id, table2.id
+        ).join(
+            table2,
+            table1.coordinate.within(table2.coordinate, 1)
+        ).filter(
+            table1.id == 0
+        ).order_by(
+            table2.id
+        ).all()
+    benchmark(do_query)
