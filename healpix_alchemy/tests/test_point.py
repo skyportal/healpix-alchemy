@@ -101,7 +101,7 @@ def test_self_join(benchmark, session, point_clouds):
 
     def do_query():
         table1 = aliased(Catalog1)
-        table2 = aliased(Catalog2)
+        table2 = aliased(Catalog1)
         return session.query(
             table1.id, table2.id
         ).join(
