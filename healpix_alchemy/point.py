@@ -1,3 +1,4 @@
+"""Spatial indexing for astronomical point coordinates."""
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import Comparator, hybrid_property
 from sqlalchemy.schema import Column, Index
