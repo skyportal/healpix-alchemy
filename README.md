@@ -23,8 +23,7 @@ Or from GitHub:
 ## Usage
 
 ```python
-from healpix_alchemy.unit_spherical import (UnitSphericalCoordinate,
-                                            HasUnitSphericalCoordinate)
+from healpix_alchemy.unit_spherical import HasUnitSphericalCoordinate
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -45,9 +44,9 @@ class Point2(HasUnitSphericalCoordinate, Base):
 ...
 
 # Populate Point1 and Point2 tables with some sample data...
-session.add(Point1(id=0, coordinate=UnitSphericalCoordinate(lon=320.5, lat=-23.5)))
+session.add(Point1(id=0, lon=320.5, lat=-23.5))
 ...
-session.add(Point2(id=0, coordinate=UnitSphericalCoordinate(lon=18.1, lat=18.3)))
+session.add(Point2(id=0, lon=18.1, lat=18.3))
 ...
 session.commit()
 
@@ -58,7 +57,7 @@ query = session.query(
     Point1.id, Point2.id
 ).join(
     Point2,
-    Point1.coordinate.within(Point2.coordinate, separation)
+    Point1.within(Point2, separation)
 ).order_by(
     Point1.id, Point2.id
 )
