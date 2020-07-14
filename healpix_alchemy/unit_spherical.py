@@ -34,10 +34,11 @@ class UnitSphericalCoordinateComparator(CompositeProperty.Comparator):
     def within(self, other, radius):
         sin_radius = sind(radius)
         cos_radius = cosd(radius)
-        carts = list(zip(*(obj.cartesian() for obj in (self, other))))
-        return and_(*(lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius)
-                      for lhs, rhs in carts),
-                    sum(lhs * rhs for lhs, rhs in carts) >= cos_radius)
+        carts = (obj.cartesian() for obj in (self, other))
+        terms = ((lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius),
+                  lhs * rhs) for lhs, rhs in zip(*carts))
+        bounding_box_terms, dot_product_terms = zip(*terms)
+        return and_(*bounding_box_terms, sum(dot_product_terms) >= cos_radius)
 
 
 class HasUnitSphericalCoordinate:
