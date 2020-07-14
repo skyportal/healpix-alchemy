@@ -58,7 +58,7 @@ def session(postgresql_engine):
 
 @pytest.fixture(params=[10, 100, 1000, 10000])
 def point_clouds(request, session):
-    # Generate two random point clouds
+    """Generate two random point clouds."""
     n = request.param
 
     with NumpyRNGContext(8675309):
@@ -79,7 +79,6 @@ def test_cross_join(benchmark, session, point_clouds):
     separation = 1  # degrees
     lons, lats = point_clouds
 
-    # Find all matches within :var:`separation` degrees
     def do_query():
         return session.query(
             Point1.id, Point2.id
@@ -89,6 +88,7 @@ def test_cross_join(benchmark, session, point_clouds):
         ).order_by(
             Point1.id, Point2.id
         ).all()
+
     result = benchmark(do_query)
     matches = np.asarray(result).reshape(-1, 2)
 
@@ -102,6 +102,7 @@ def test_cross_join(benchmark, session, point_clouds):
 
 
 def test_self_join(benchmark, session, point_clouds):
+
     def do_query():
         table1 = aliased(Point1)
         table2 = aliased(Point2)
@@ -113,10 +114,12 @@ def test_self_join(benchmark, session, point_clouds):
         ).order_by(
             table1.id, table2.id
         ).all()
+
     benchmark(do_query)
 
 
 def test_cone_search(benchmark, session, point_clouds):
+
     def do_query():
         table1 = aliased(Point1)
         table2 = aliased(Point2)
@@ -130,4 +133,5 @@ def test_cone_search(benchmark, session, point_clouds):
         ).order_by(
             table2.id
         ).all()
+
     benchmark(do_query)
