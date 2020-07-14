@@ -28,13 +28,14 @@ def _to_cartesian(lon, lat):
 
 class UnitSphericalCoordinateComparator(CompositeProperty.Comparator):
 
+    @property
     def cartesian(self):
         return _to_cartesian(*self.__clause_element__().clauses)
 
     def within(self, other, radius):
         sin_radius = sind(radius)
         cos_radius = cosd(radius)
-        carts = (obj.cartesian() for obj in (self, other))
+        carts = (obj.cartesian for obj in (self, other))
         terms = ((lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius),
                   lhs * rhs) for lhs, rhs in zip(*carts))
         bounding_box_terms, dot_product_terms = zip(*terms)
