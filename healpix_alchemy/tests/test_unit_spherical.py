@@ -117,17 +117,13 @@ def test_self_join(benchmark, session, point_clouds):
 
 
 def test_cone_search(benchmark, session, point_clouds):
+    target = session.query(Point1).get(0)
     def do_query():
-        table1 = aliased(Point1)
-        table2 = aliased(Point2)
         return session.query(
-            table1.id, table2.id
-        ).join(
-            table2,
-            table1.coordinate.within(table2.coordinate, 1)
+            Point1.id
         ).filter(
-            table1.id == 0
+            Point1.coordinate.within(target.coordinate, 1)
         ).order_by(
-            table2.id
+            Point1.id
         ).all()
     benchmark(do_query)
