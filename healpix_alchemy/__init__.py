@@ -1,3 +1,3 @@
-from .unit_spherical import UnitSphericalCoordinate, HasUnitSphericalCoordinate
+from .point import Point, HasPoint
 
-__all__ = ('UnitSphericalCoordinate', 'HasUnitSphericalCoordinate')
+__all__ = ('Point', 'HasPoint')

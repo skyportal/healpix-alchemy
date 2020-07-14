@@ -9,19 +9,19 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm import aliased
 import pytest
 
-from .. import HasUnitSphericalCoordinate, UnitSphericalCoordinate
+from .. import HasPoint, Point
 
 
 Base = declarative_base()
 
 
-class Point1(HasUnitSphericalCoordinate, Base):
-    __tablename__ = 'points1'
+class Catalog1(HasPoint, Base):
+    __tablename__ = 'catalog1'
     id = Column(Integer, primary_key=True)
 
 
-class Point2(HasUnitSphericalCoordinate, Base):
-    __tablename__ = 'points2'
+class Catalog2(HasPoint, Base):
+    __tablename__ = 'catalog2'
     id = Column(Integer, primary_key=True)
 
 
@@ -60,9 +60,9 @@ def point_clouds(request, session, engine):
         decs = np.rad2deg(np.arcsin(np.random.uniform(-1, 1, (2, n))))
 
     # Commit to database
-    for model_cls, ras_, decs_ in zip([Point1, Point2], ras, decs):
+    for model_cls, ras_, decs_ in zip([Catalog1, Catalog2], ras, decs):
         for i, (ra, dec) in enumerate(zip(ras_, decs_)):
-            row = model_cls(id=i, coordinate=UnitSphericalCoordinate(ra, dec))
+            row = model_cls(id=i, point=Point(ra, dec))
             session.add(row)
     session.commit()
 
@@ -77,12 +77,12 @@ def test_cross_join(benchmark, session, point_clouds):
 
     def do_query():
         return session.query(
-            Point1.id, Point2.id
+            Catalog1.id, Catalog2.id
         ).join(
-            Point2,
-            Point1.coordinate.within(Point2.coordinate, SEPARATION)
+            Catalog2,
+            Catalog1.point.within(Catalog2.point, SEPARATION)
         ).order_by(
-            Point1.id, Point2.id
+            Catalog1.id, Catalog2.id
         ).all()
 
     result = benchmark(do_query)
@@ -100,13 +100,13 @@ def test_cross_join(benchmark, session, point_clouds):
 def test_self_join(benchmark, session, point_clouds):
 
     def do_query():
-        table1 = aliased(Point1)
-        table2 = aliased(Point2)
+        table1 = aliased(Catalog1)
+        table2 = aliased(Catalog2)
         return session.query(
             table1.id, table2.id
         ).join(
             table2,
-            table1.coordinate.within(table2.coordinate, SEPARATION)
+            table1.point.within(table2.point, SEPARATION)
         ).order_by(
             table1.id, table2.id
         ).all()
@@ -115,30 +115,30 @@ def test_self_join(benchmark, session, point_clouds):
 
 
 def test_cone_search(benchmark, session, point_clouds):
-    target = session.query(Point1).get(0)
+    target = session.query(Catalog1).get(0)
 
     def do_query():
         return session.query(
-            Point1.id
+            Catalog1.id
         ).filter(
-            Point1.coordinate.within(target.coordinate, SEPARATION)
+            Catalog1.point.within(target.point, SEPARATION)
         ).order_by(
-            Point1.id
+            Catalog1.id
         ).all()
 
     benchmark(do_query)
 
 
 def test_cone_search_literal(benchmark, session, point_clouds):
-    target = UnitSphericalCoordinate(100.0, 20.0)
+    target = Point(100.0, 20.0)
 
     def do_query():
         return session.query(
-            Point1.id
+            Catalog1.id
         ).filter(
-            Point1.coordinate.within(target, SEPARATION)
+            Catalog1.point.within(target, SEPARATION)
         ).order_by(
-            Point1.id
+            Catalog1.id
         ).all()
 
     benchmark(do_query)

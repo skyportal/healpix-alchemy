@@ -6,10 +6,10 @@ from sqlalchemy.types import Float
 
 from .math import sind, cosd
 
-__all__ = ('UnitSphericalCoordinate', 'HasUnitSphericalCoordinate')
+__all__ = ('Point', 'HasPoint')
 
 
-class UnitSphericalCoordinate(Comparator):
+class Point(Comparator):
 
     def __init__(self, ra, dec):
         self._ra = ra
@@ -31,17 +31,17 @@ class UnitSphericalCoordinate(Comparator):
         return and_(*bounding_box_terms, sum(dot_product_terms) >= cos_radius)
 
 
-class HasUnitSphericalCoordinate:
+class HasPoint:
 
     ra = Column(Float, nullable=False)
     dec = Column(Float, nullable=False)
 
     @hybrid_property
-    def coordinate(self):
-        return UnitSphericalCoordinate(self.ra, self.dec)
+    def point(self):
+        return Point(self.ra, self.dec)
 
-    @coordinate.setter
-    def coordinate(self, value):
+    @point.setter
+    def point(self, value):
         self.ra = value._ra
         self.dec = value._dec
 
@@ -52,5 +52,5 @@ class HasUnitSphericalCoordinate:
         except AttributeError:
             args = ()
         args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
-                      for k, v in zip('xyz', cls.coordinate.cartesian))
+                      for k, v in zip('xyz', cls.point.cartesian))
         return args

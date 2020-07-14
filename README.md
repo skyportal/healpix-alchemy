@@ -23,31 +23,30 @@ Or from GitHub:
 ## Usage
 
 ```python
-from healpix_alchemy.unit_spherical import (UnitSphericalCoordinate,
-                                            HasUnitSphericalCoordinate)
+from healpix_alchemy.point import HasPoint, Point
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
 
-# Create two tables Point1 and Point2 that both have spherical coordinates.
+# Create two tables Catalog1 and Catalog2 that both have spherical coordinates.
 
-class Point1(HasUnitSphericalCoordinate, Base):
-    __tablename__ = 'points1'
+class Catalog1(HasPoint, Base):
+    __tablename__ = 'catalog1'
     id = Column(Integer, primary_key=True)
 
 
-class Point2(HasUnitSphericalCoordinate, Base):
-    __tablename__ = 'points2'
+class Catalog2(HasPoint, Base):
+    __tablename__ = 'catalog2'
     id = Column(Integer, primary_key=True)
 
 
 ...
 
-# Populate Point1 and Point2 tables with some sample data...
-session.add(Point1(id=0, coordinate=UnitSphericalCoordinate(ra=320.5, dec=-23.5)))
+# Populate Catalog1 and Catalog2 tables with some sample data...
+session.add(Catalog1(id=0, point=Point(ra=320.5, dec=-23.5)))
 ...
-session.add(Point2(id=0, coordinate=UnitSphericalCoordinate(ra=18.1, dec=18.3)))
+session.add(Catalog2(id=0, point=Point(ra=18.1, dec=18.3)))
 ...
 session.commit()
 
@@ -55,12 +54,12 @@ session.commit()
 # Cross-match the two tables.
 separation = 1  # separation in degrees
 query = session.query(
-    Point1.id, Point2.id
+    Catalog1.id, Catalog2.id
 ).join(
-    Point2,
-    Point1.coordinate.within(Point2.coordinate, separation)
+    Catalog2,
+    Catalog1.point.within(Catalog2.point, separation)
 ).order_by(
-    Point1.id, Point2.id
+    Catalog1.id, Catalog2.id
 )
 for row in query:
     ...  # do something with the query results
