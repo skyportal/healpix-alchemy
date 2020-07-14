@@ -116,7 +116,7 @@ def test_self_join(benchmark, session, point_clouds):
     benchmark(do_query)
 
 
-def test_self_join(benchmark, session, point_clouds):
+def test_cone_search(benchmark, session, point_clouds):
     def do_query():
         table1 = aliased(Point1)
         table2 = aliased(Point2)
