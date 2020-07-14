@@ -7,7 +7,7 @@ from sqlalchemy.types import Float
 
 from .math import sind, cosd
 
-__all__ = ('Point', 'HasPoint', 'HasPointNullable')
+__all__ = ('Point', 'HasPoint', 'HasNullablePoint')
 
 
 class Point(Comparator):
@@ -84,4 +84,4 @@ def point_factory(nullable=False):
     return _HasPoint
 
 HasPoint = point_factory()
-HasPointNullable = point_factory(nullable=True)
+HasNullablePoint = point_factory(nullable=True)
