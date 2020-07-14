@@ -57,8 +57,8 @@ class Point(Comparator):
 class HasPoint:
     """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
-    ra = Column(Float, nullable=False)
-    dec = Column(Float, nullable=False)
+    ra = Column(Float, nullable=True)
+    dec = Column(Float, nullable=True)
 
     @hybrid_property
     def point(self):
