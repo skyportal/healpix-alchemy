@@ -9,8 +9,7 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm import aliased
 import pytest
 
-from ..unit_spherical import (HasUnitSphericalCoordinate,
-                              UnitSphericalCoordinate)
+from .. import HasUnitSphericalCoordinate, UnitSphericalCoordinate
 
 
 Base = declarative_base()
