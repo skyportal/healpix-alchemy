@@ -9,7 +9,7 @@ from .math import sind, cosd
 __all__ = ('UnitSphericalCoordinate', 'HasUnitSphericalCoordinate')
 
 
-class UnitSphericalCoordinate:
+class UnitSphericalCoordinate(Comparator):
 
     def __init__(self, lon, lat):
         self.lon = lon
@@ -17,7 +17,9 @@ class UnitSphericalCoordinate:
 
     @property
     def cartesian(self):
-        return cosd(self.lon) * cosd(self.lat), sind(self.lon) * cosd(self.lat), sind(self.lat)
+        return (cosd(self.lon) * cosd(self.lat),
+                sind(self.lon) * cosd(self.lat),
+                sind(self.lat))
 
     def within(self, other, radius):
         sin_radius = sind(radius)

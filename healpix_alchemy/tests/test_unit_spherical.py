@@ -76,6 +76,7 @@ def point_clouds(request, session):
 
 
 def test_cone_search_orig(benchmark, session, point_clouds):
+
     def do_query():
         table1 = aliased(Point1)
         table2 = aliased(Point2)
@@ -89,11 +90,13 @@ def test_cone_search_orig(benchmark, session, point_clouds):
         ).order_by(
             table2.id
         ).all()
+
     benchmark(do_query)
 
 
 def test_cone_search(benchmark, session, point_clouds):
     target = session.query(Point1).get(0)
+
     def do_query():
         return session.query(
             Point1.id
@@ -102,11 +105,13 @@ def test_cone_search(benchmark, session, point_clouds):
         ).order_by(
             Point1.id
         ).all()
+
     benchmark(do_query)
 
 
 def test_cone_search_literal(benchmark, session, point_clouds):
     target = UnitSphericalCoordinate(100.0, 20.0)
+
     def do_query():
         return session.query(
             Point1.id
@@ -115,4 +120,5 @@ def test_cone_search_literal(benchmark, session, point_clouds):
         ).order_by(
             Point1.id
         ).all()
+
     benchmark(do_query)
