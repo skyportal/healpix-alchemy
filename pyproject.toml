@@ -4,6 +4,7 @@ version = "0.0.1"
 description = "SQLAlchemy extensions for HEALPix spatially indexed astronomy data"
 authors = ["Leo Singer <leo.singer@ligo.org>"]
 license = "BSD-3-clause"
+repository = "https://github.com/skyportal/healpix-alchemy"
 
 [tool.poetry.dependencies]
 python = "^3.7"
