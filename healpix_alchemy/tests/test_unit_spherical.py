@@ -70,8 +70,10 @@ def point_clouds(request, session, engine):
     return lons, lats
 
 
+SEPARATION = 1  # Separation in degrees for unit tests below
+
+
 def test_cross_join(benchmark, session, point_clouds):
-    separation = 1  # degrees
     lons, lats = point_clouds
 
     def do_query():
@@ -79,7 +81,7 @@ def test_cross_join(benchmark, session, point_clouds):
             Point1.id, Point2.id
         ).join(
             Point2,
-            Point1.coordinate.within(Point2.coordinate, separation)
+            Point1.coordinate.within(Point2.coordinate, SEPARATION)
         ).order_by(
             Point1.id, Point2.id
         ).all()
@@ -90,7 +92,7 @@ def test_cross_join(benchmark, session, point_clouds):
     # Find all matches using Astropy
     coords1, coords2 = (SkyCoord(lons_, lats_, unit=(u.deg, u.deg))
                         for lons_, lats_ in zip(lons, lats))
-    expected_matches = match_sky(coords1, coords2, separation * u.deg)
+    expected_matches = match_sky(coords1, coords2, SEPARATION * u.deg)
 
     # Compare SQLAlchemy result to Astropy
     np.testing.assert_array_equal(matches, expected_matches)
@@ -105,7 +107,7 @@ def test_self_join(benchmark, session, point_clouds):
             table1.id, table2.id
         ).join(
             table2,
-            table1.coordinate.within(table2.coordinate, 1)
+            table1.coordinate.within(table2.coordinate, SEPARATION)
         ).order_by(
             table1.id, table2.id
         ).all()
@@ -122,7 +124,7 @@ def test_cone_search(benchmark, session, point_clouds):
             table1.id, table2.id
         ).join(
             table2,
-            table1.coordinate.within(table2.coordinate, 1)
+            table1.coordinate.within(table2.coordinate, SEPARATION)
         ).filter(
             table1.id == 0
         ).order_by(
