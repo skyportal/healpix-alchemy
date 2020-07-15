@@ -44,4 +44,4 @@ jobs:
         poetry install
     - name: Test with pytest
       run: |
-        poetry run pytest --benchmark-sort=fullname
+        poetry run pytest -x --benchmark-sort=fullname
