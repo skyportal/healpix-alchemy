@@ -14,7 +14,7 @@ class pi(GenericFunction):
 def _compile_trigd_default(trig):
     def compilefunc(element, compiler, **kw):
         arg, = element.clauses
-        return compiler.process(trig(arg * pi()), **kw)
+        return compiler.process(trig(arg * pi() / 180.0), **kw)
     return compilefunc
 
 
