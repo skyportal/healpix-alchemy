@@ -77,7 +77,10 @@ def point_factory(nullable=False):
                 args = super().__table_args__
             except AttributeError:
                 args = ()
-            args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
+            # Note: remove .self_group() once
+            # https://github.com/sqlalchemy/sqlalchemy/issues/5462 is fixed.
+            args += tuple(Index(f'{cls.__tablename__}_{k}_index',
+                                v.self_group())
                           for k, v in zip('xyz', cls.point.cartesian))
             return args
 
