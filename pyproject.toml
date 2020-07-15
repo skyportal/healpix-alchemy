@@ -22,6 +22,7 @@ numpy = "*"
 psycopg2-binary = "*"
 pytest = "*"
 pytest-benchmark = "*"
+pytest-mysql = "*"
 pytest-postgresql = "*"
 scipy = "*"
 
