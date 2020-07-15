@@ -3,7 +3,7 @@ from sqlalchemy.sql.functions import GenericFunction, ReturnTypeFromArgs
 from sqlalchemy.sql.sqltypes import Float
 from sqlalchemy.ext.compiler import compiles
 
-__all__ = ['pi']
+__all__ = ['pi', 'degrees', 'radians']
 mod_dict = globals()
 
 
@@ -11,10 +11,18 @@ class pi(GenericFunction):
     type = Float
 
 
+class degrees(ReturnTypeFromArgs):
+    type = Float
+
+
+class radians(ReturnTypeFromArgs):
+    type = Float
+
+
 def _compile_trigd_default(trig):
     def compilefunc(element, compiler, **kw):
         arg, = element.clauses
-        return compiler.process(trig(arg * pi() / 180.0), **kw)
+        return compiler.process(trig(radians(arg)), **kw)
     return compilefunc
 
 
