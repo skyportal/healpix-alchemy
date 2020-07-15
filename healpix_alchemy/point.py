@@ -4,6 +4,7 @@ from sqlalchemy.ext.hybrid import Comparator, hybrid_property
 from sqlalchemy.schema import Column, Index
 from sqlalchemy.sql import and_
 from sqlalchemy.types import Float
+from sqlalchemy.sql.elements import Grouping
 
 from .math import sind, cosd
 
@@ -26,9 +27,11 @@ class Point(Comparator):
             A tuple of the x, y, and z coordinates.
 
         """
-        return (cosd(self._ra) * cosd(self._dec),
-                sind(self._ra) * cosd(self._dec),
-                sind(self._dec))
+        # Note: remove Grouping() once
+        # https://github.com/sqlalchemy/sqlalchemy/issues/5462 is fixed.
+        return (Grouping(cosd(self._ra) * cosd(self._dec)),
+                Grouping(sind(self._ra) * cosd(self._dec)),
+                Grouping(sind(self._dec)))
 
     def within(self, other, radius):
         """Test if this point is within a given radius of another point.
@@ -77,10 +80,7 @@ def point_factory(nullable=False):
                 args = super().__table_args__
             except AttributeError:
                 args = ()
-            # Note: remove .self_group() once
-            # https://github.com/sqlalchemy/sqlalchemy/issues/5462 is fixed.
-            args += tuple(Index(f'{cls.__tablename__}_{k}_index',
-                                v.self_group())
+            args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
                           for k, v in zip('xyz', cls.point.cartesian))
             return args
 
