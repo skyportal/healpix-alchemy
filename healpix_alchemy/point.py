@@ -55,7 +55,7 @@ class Point(Comparator):
 
 
 def point_factory(nullable=False):
-    
+
     class _HasPoint:
         """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
@@ -82,6 +82,7 @@ def point_factory(nullable=False):
             return args
 
     return _HasPoint
+
 
 HasPoint = point_factory()
 HasNullablePoint = point_factory(nullable=True)
