@@ -17,12 +17,12 @@ Base = declarative_base()
 
 class Catalog1(HasPoint, Base):
     __tablename__ = 'catalog1'
-    catalog_id = Column(Integer, primary_key=True)
+    catalog_id = Column(Integer, primary_key=True, autoincrement=False)
 
 
 class Catalog2(HasPoint, Base):
     __tablename__ = 'catalog2'
-    catalog_id = Column(Integer, primary_key=True)
+    catalog_id = Column(Integer, primary_key=True, autoincrement=False)
 
 
 def match_sky(coords1, coords2, separation):
