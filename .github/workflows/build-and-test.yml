@@ -25,7 +25,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install gnupg
-        sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5
+        sudo sudo apt-key add .github/workflows/mysql_pubkey.asc
         sudo echo 'deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-8.0' >> /etc/apt/sources.list
         sudo apt-get update
         sudo apt-get install postgresql mysql-server
