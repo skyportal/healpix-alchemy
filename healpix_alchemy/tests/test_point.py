@@ -129,7 +129,7 @@ def test_cone_search(benchmark, session, point_clouds):
     benchmark(do_query)
 
 
-def test_cone_search_literal(benchmark, session, point_clouds):
+def test_cone_search_literal_lhs(benchmark, session, point_clouds):
     target = Point(100.0, 20.0)
 
     def do_query():
@@ -137,6 +137,21 @@ def test_cone_search_literal(benchmark, session, point_clouds):
             Catalog1.id
         ).filter(
             Catalog1.point.within(target, SEPARATION)
+        ).order_by(
+            Catalog1.id
+        ).all()
+
+    benchmark(do_query)
+
+
+def test_cone_search_literal_rhs(benchmark, session, point_clouds):
+    target = Point(100.0, 20.0)
+
+    def do_query():
+        return session.query(
+            Catalog1.id
+        ).filter(
+            target.point.within(Catalog1, SEPARATION)
         ).order_by(
             Catalog1.id
         ).all()
