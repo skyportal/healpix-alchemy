@@ -1,3 +1,3 @@
-from .point import Point, HasPoint
+from .point import Point
 
-__all__ = ('Point', 'HasPoint')
+__all__ = ('Point',)

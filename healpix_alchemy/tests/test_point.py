@@ -9,18 +9,18 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm import aliased
 import pytest
 
-from .. import HasPoint, Point
+from .. import Point
 
 
 Base = declarative_base()
 
 
-class Catalog1(HasPoint, Base):
+class Catalog1(Point, Base):
     __tablename__ = 'catalog1'
     id = Column(Integer, primary_key=True)
 
 
-class Catalog2(HasPoint, Base):
+class Catalog2(Point, Base):
     __tablename__ = 'catalog2'
     id = Column(Integer, primary_key=True)
 
@@ -62,7 +62,7 @@ def point_clouds(request, session, engine):
     # Commit to database
     for model_cls, ras_, decs_ in zip([Catalog1, Catalog2], ras, decs):
         for i, (ra, dec) in enumerate(zip(ras_, decs_)):
-            row = model_cls(id=i, point=Point(ra, dec))
+            row = model_cls(id=i, ra=ra, dec=dec)
             session.add(row)
     session.commit()
 
@@ -80,7 +80,7 @@ def test_cross_join(benchmark, session, point_clouds):
             Catalog1.id, Catalog2.id
         ).join(
             Catalog2,
-            Catalog1.point.within(Catalog2.point, SEPARATION)
+            Catalog1.within(Catalog2, SEPARATION)
         ).order_by(
             Catalog1.id, Catalog2.id
         ).all()
@@ -106,7 +106,7 @@ def test_self_join(benchmark, session, point_clouds):
             table1.id, table2.id
         ).join(
             table2,
-            table1.point.within(table2.point, SEPARATION)
+            table1.within(table2, SEPARATION)
         ).order_by(
             table1.id, table2.id
         ).all()
@@ -121,7 +121,7 @@ def test_cone_search(benchmark, session, point_clouds):
         return session.query(
             Catalog1.id
         ).filter(
-            Catalog1.point.within(target.point, SEPARATION)
+            Catalog1.within(target, SEPARATION)
         ).order_by(
             Catalog1.id
         ).all()
@@ -130,13 +130,13 @@ def test_cone_search(benchmark, session, point_clouds):
 
 
 def test_cone_search_literal_lhs(benchmark, session, point_clouds):
-    target = Point(100.0, 20.0)
+    target = Point(ra=100.0, dec=20.0)
 
     def do_query():
         return session.query(
             Catalog1.id
         ).filter(
-            Catalog1.point.within(target, SEPARATION)
+            Catalog1.within(target, SEPARATION)
         ).order_by(
             Catalog1.id
         ).all()
@@ -145,13 +145,13 @@ def test_cone_search_literal_lhs(benchmark, session, point_clouds):
 
 
 def test_cone_search_literal_rhs(benchmark, session, point_clouds):
-    target = Point(100.0, 20.0)
+    target = Point(ra=100.0, dec=20.0)
 
     def do_query():
         return session.query(
             Catalog1.id
         ).filter(
-            target.within(Catalog1.point, SEPARATION)
+            target.within(Catalog1, SEPARATION)
         ).order_by(
             Catalog1.id
         ).all()
