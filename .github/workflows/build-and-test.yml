@@ -26,7 +26,7 @@ jobs:
         curl -O https://repo.mysql.com/mysql-apt-config_0.8.15-1_all.deb
         sudo dpkg -i mysql-apt-config_0.8.15-1_all.deb
         sudo apt-get update
-        sudo apt-get install postgresql mysql-server
+        sudo apt-get install postgresql mysql-server-8.0
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
