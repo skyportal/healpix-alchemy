@@ -23,10 +23,12 @@ jobs:
     - name: Set up databases (ubuntu)
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        curl -O https://repo.mysql.com/mysql-apt-config_0.8.15-1_all.deb
-        sudo dpkg -i mysql-apt-config_0.8.15-1_all.deb
         sudo apt-get update
-        sudo apt-get install postgresql mysql-server-8
+        sudo apt-get install gnupg
+        sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 8C718D3B5072E1F5
+        sudo echo 'deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-8.0' >> /etc/apt/sources.list
+        sudo apt-get update
+        sudo apt-get install postgresql mysql-server
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
