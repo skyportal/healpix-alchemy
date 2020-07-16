@@ -151,7 +151,7 @@ def test_cone_search_literal_rhs(benchmark, session, point_clouds):
         return session.query(
             Catalog1.id
         ).filter(
-            target.point.within(Catalog1.point, SEPARATION)
+            target.within(Catalog1.point, SEPARATION)
         ).order_by(
             Catalog1.id
         ).all()
