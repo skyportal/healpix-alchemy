@@ -17,12 +17,12 @@ Base = declarative_base()
 
 class Catalog1(HasPoint, Base):
     __tablename__ = 'catalog1'
-    id = Column(Integer, primary_key=True)
+    catalog_id = Column(Integer, primary_key=True)
 
 
 class Catalog2(HasPoint, Base):
     __tablename__ = 'catalog2'
-    id = Column(Integer, primary_key=True)
+    catalog_id = Column(Integer, primary_key=True)
 
 
 def match_sky(coords1, coords2, separation):
@@ -62,7 +62,7 @@ def point_clouds(request, session, engine):
     # Commit to database
     for model_cls, ras_, decs_ in zip([Catalog1, Catalog2], ras, decs):
         for i, (ra, dec) in enumerate(zip(ras_, decs_)):
-            row = model_cls(id=i, point=Point(ra, dec))
+            row = model_cls(catalog_id=i, point=Point(ra, dec))
             session.add(row)
     session.commit()
 
@@ -77,12 +77,12 @@ def test_cross_join(benchmark, session, point_clouds):
 
     def do_query():
         return session.query(
-            Catalog1.id, Catalog2.id
+            Catalog1.catalog_id, Catalog2.catalog_id
         ).join(
             Catalog2,
             Catalog1.point.within(Catalog2.point, SEPARATION)
         ).order_by(
-            Catalog1.id, Catalog2.id
+            Catalog1.catalog_id, Catalog2.catalog_id
         ).all()
 
     result = benchmark(do_query)
@@ -103,12 +103,12 @@ def test_self_join(benchmark, session, point_clouds):
         table1 = aliased(Catalog1)
         table2 = aliased(Catalog1)
         return session.query(
-            table1.id, table2.id
+            table1.catalog_id, table2.catalog_id
         ).join(
             table2,
             table1.point.within(table2.point, SEPARATION)
         ).order_by(
-            table1.id, table2.id
+            table1.catalog_id, table2.catalog_id
         ).all()
 
     benchmark(do_query)
@@ -119,11 +119,11 @@ def test_cone_search(benchmark, session, point_clouds):
 
     def do_query():
         return session.query(
-            Catalog1.id
+            Catalog1.catalog_id
         ).filter(
             Catalog1.point.within(target.point, SEPARATION)
         ).order_by(
-            Catalog1.id
+            Catalog1.catalog_id
         ).all()
 
     benchmark(do_query)
@@ -134,11 +134,11 @@ def test_cone_search_literal(benchmark, session, point_clouds):
 
     def do_query():
         return session.query(
-            Catalog1.id
+            Catalog1.catalog_id
         ).filter(
             Catalog1.point.within(target, SEPARATION)
         ).order_by(
-            Catalog1.id
+            Catalog1.catalog_id
         ).all()
 
     benchmark(do_query)
