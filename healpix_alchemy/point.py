@@ -77,7 +77,7 @@ def point_factory(nullable=False):
                 args = super().__table_args__
             except AttributeError:
                 args = ()
-            args += tuple(Index(f'{cls.__tablename__}_{k}_index', v)
+            args += tuple(Index(f'ix_{cls.__tablename__}_{k}', v)
                           for k, v in zip('xyz', cls.point.cartesian))
             return args
 
