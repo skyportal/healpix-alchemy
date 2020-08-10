@@ -6,11 +6,12 @@ from sqlalchemy.sql import and_
 from sqlalchemy.types import Float
 
 from .math import sind, cosd
+from .util import InheritTableArgs
 
 __all__ = ('Point',)
 
 
-class Point:
+class Point(InheritTableArgs):
     """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
     def __init__(self, *args, ra=None, dec=None, **kwargs):
@@ -61,9 +62,6 @@ class Point:
 
     @declared_attr
     def __table_args__(cls):
-        try:
-            args = super().__table_args__
-        except AttributeError:
-            args = ()
-        args += (Index(f'ix_{cls.__tablename__}_point', *cls.cartesian),)
-        return args
+        *args, kwargs = super().__table_args__
+        index = Index(f'ix_{cls.__tablename__}_point', *cls.cartesian)
+        return *args, index, kwargs
