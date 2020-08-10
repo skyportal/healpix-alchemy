@@ -2,4 +2,6 @@ __pycache__
 dist
 *.egg-info
 .benchmarks
+.idea
+.vscode
 settings.json
