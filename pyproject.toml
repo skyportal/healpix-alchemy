@@ -14,8 +14,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-sqlalchemy = "*"
 astropy = "*"
+sqlalchemy = "*"
 
 [tool.poetry.dev-dependencies]
 numpy = "*"
