@@ -1,14 +1,15 @@
 """Spatial indexing for astronomical point coordinates."""
+from math import cos, radians as rad, sin
+
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.schema import Column, Index
-from sqlalchemy.sql import and_
+from sqlalchemy.sql import and_, between
 from sqlalchemy.types import Float
 from sqlalchemy import BigInteger
 
 import astropy.units as u
 
-from .math import sind, cosd
 from .util import default_and_onupdate as dfl, InheritTableArgs
 from .healpix import LEVEL, HPX
 
@@ -26,9 +27,21 @@ class Point(InheritTableArgs):
     ra = Column(Float)
     dec = Column(Float)
 
+    x = Column(
+        'x', Float, doc='Cached and precomputed Cartesian "x" coordinate',
+        **dfl(lambda ra, dec: cos(rad(ra)) * cos(rad(dec))))
+
+    y = Column(
+        'y', Float, doc='Cached and precomputed Cartesian "y" coordinate',
+        **dfl(lambda ra, dec: sin(rad(ra)) * cos(rad(dec))))
+
+    z = Column(
+        'z', Float, doc='Cached and precomputed Cartesian "z" coordinate',
+        **dfl(lambda dec: sin(rad(dec))))
+
     nested = Column(
         BigInteger, index=True,
-        doc=f'HEALPix nested index at nside=2**{LEVEL}',
+        doc=f'Cached and precomputed HEALPix nested index at nside=2**{LEVEL}',
         **dfl(lambda ra, dec: int(HPX.lonlat_to_healpix(ra*u.deg, dec*u.deg))))
 
     @hybrid_property
@@ -41,9 +54,7 @@ class Point(InheritTableArgs):
             A tuple of the x, y, and z coordinates.
 
         """
-        return (cosd(self.ra) * cosd(self.dec),
-                sind(self.ra) * cosd(self.dec),
-                sind(self.dec))
+        return (self.x, self.y, self.z)
 
     @hybrid_method
     def within(self, other, radius):
@@ -61,12 +72,12 @@ class Point(InheritTableArgs):
         bool
 
         """
-        sin_radius = sind(radius)
-        cos_radius = cosd(radius)
+        sin_radius = sin(rad(radius))
+        cos_radius = cos(rad(radius))
         carts = (obj.cartesian for obj in (self, other))
         # Evaluate boolean expressions for bounding box test
         # and dot product
-        terms = ((lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius),
+        terms = ((between(lhs, rhs - 2 * sin_radius, rhs + 2 * sin_radius),
                   lhs * rhs) for lhs, rhs in zip(*carts))
         bounding_box_terms, dot_product_terms = zip(*terms)
         return and_(*bounding_box_terms, sum(dot_product_terms) >= cos_radius)
