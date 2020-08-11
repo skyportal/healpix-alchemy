@@ -64,4 +64,4 @@ class Point(InheritTableArgs):
     def __table_args__(cls):
         *args, kwargs = super().__table_args__
         index = Index(f'ix_{cls.__tablename__}_point', *cls.cartesian)
-        return *args, index, kwargs
+        return (*args, index, kwargs)

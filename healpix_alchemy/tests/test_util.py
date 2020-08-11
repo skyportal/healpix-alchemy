@@ -24,6 +24,6 @@ def test_inherit_table_args(base_table_args, expected_table_args):
             *args, kwargs = super().__table_args__
             args = (*args, 1)
             kwargs = {**kwargs, 'bar': 2}
-            return *args, kwargs
+            return (*args, kwargs)
 
     assert Derived.__table_args__ == expected_table_args
