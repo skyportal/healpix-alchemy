@@ -8,60 +8,68 @@ from sqlalchemy.types import Float
 from .math import sind, cosd
 from .util import InheritTableArgs
 
-__all__ = ('Point',)
+__all__ = ('Point', 'NonNullablePoint')
 
 
-class Point(InheritTableArgs):
-    """Mixin class to add a point to a an SQLAlchemy declarative model."""
+def point_factory(nullable=True):
 
-    def __init__(self, *args, ra=None, dec=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.ra = ra
-        self.dec = dec
+    class Point(InheritTableArgs):
+        """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
-    ra = Column(Float)
-    dec = Column(Float)
+        def __init__(self, *args, ra=None, dec=None, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.ra = ra
+            self.dec = dec
 
-    @hybrid_property
-    def cartesian(self):
-        """Convert to Cartesian coordinates.
+        ra = Column(Float, nullable=nullable, doc="J2000 Right Ascension [deg.]")
+        dec = Column(Float, nullable=nullable, doc="J2000 Declination [deg.]")
 
-        Returns
-        -------
-        x, y, z : float
-            A tuple of the x, y, and z coordinates.
+        @hybrid_property
+        def cartesian(self):
+            """Convert to Cartesian coordinates.
 
-        """
-        return (cosd(self.ra) * cosd(self.dec),
-                sind(self.ra) * cosd(self.dec),
-                sind(self.dec))
+            Returns
+            -------
+            x, y, z : float
+                A tuple of the x, y, and z coordinates.
 
-    @hybrid_method
-    def within(self, other, radius):
-        """Test if this point is within a given radius of another point.
+            """
+            return (cosd(self.ra) * cosd(self.dec),
+                    sind(self.ra) * cosd(self.dec),
+                    sind(self.dec))
 
-        Parameters
-        ----------
-        other : Point
-            The other point.
-        radius : float
-            The match radius in degrees.
+        @hybrid_method
+        def within(self, other, radius):
+            """Test if this point is within a given radius of another point.
 
-        Returns
-        -------
-        bool
+            Parameters
+            ----------
+            other : Point
+                The other point.
+            radius : float
+                The match radius in degrees.
 
-        """
-        sin_radius = sind(radius)
-        cos_radius = cosd(radius)
-        carts = (obj.cartesian for obj in (self, other))
-        terms = ((lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius),
-                  lhs * rhs) for lhs, rhs in zip(*carts))
-        bounding_box_terms, dot_product_terms = zip(*terms)
-        return and_(*bounding_box_terms, sum(dot_product_terms) >= cos_radius)
+            Returns
+            -------
+            bool
 
-    @declared_attr
-    def __table_args__(cls):
-        *args, kwargs = super().__table_args__
-        index = Index(f'ix_{cls.__tablename__}_point', *cls.cartesian)
-        return (*args, index, kwargs)
+            """
+            sin_radius = sind(radius)
+            cos_radius = cosd(radius)
+            carts = (obj.cartesian for obj in (self, other))
+            terms = ((lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius),
+                      lhs * rhs) for lhs, rhs in zip(*carts))
+            bounding_box_terms, dot_product_terms = zip(*terms)
+            return and_(*bounding_box_terms, sum(dot_product_terms) >= cos_radius)
+
+        @declared_attr
+        def __table_args__(cls):
+            *args, kwargs = super().__table_args__
+            index = Index(f'ix_{cls.__tablename__}_point', *cls.cartesian)
+            return (*args, index, kwargs)
+
+    return Point
+
+
+Point = point_factory()
+NonNullablePoint = point_factory(nullable=False)
