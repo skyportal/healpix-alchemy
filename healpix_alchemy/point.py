@@ -11,7 +11,7 @@ from .util import InheritTableArgs
 __all__ = ('Point', 'NonNullablePoint')
 
 
-def point_factory(nullable=True):
+def make_Point(nullable=True):
 
     class Point(InheritTableArgs):
         """Mixin class to add a point to a an SQLAlchemy declarative model."""
@@ -71,5 +71,5 @@ def point_factory(nullable=True):
     return Point
 
 
-Point = point_factory()
-NonNullablePoint = point_factory(nullable=False)
+Point = make_Point()
+NonNullablePoint = make_Point(nullable=False)
