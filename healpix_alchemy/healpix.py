@@ -93,7 +93,7 @@ class Region:
         # but it actually returns an array of size(1, 0).
         if nested_ranges.size == 0:
             nested_ranges = nested_ranges.reshape(-1, 2)
-        tiles = [tile_class(nested_lo=lo, nested_hi=hi)
+        tiles = [tile_class(nested_lo=int(lo), nested_hi=int(hi))
                  for lo, hi in nested_ranges]
         return cls(*args, tiles=tiles, **kwargs)
 
