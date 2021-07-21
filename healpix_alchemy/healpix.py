@@ -26,13 +26,13 @@ class Tile:
 
     nested_lo = Column(
         BigInteger, index=True, nullable=False, primary_key=True,
-        comment=('Lower end of range of HEALPix nested indices at',
-                 f'nside=2**{LEVEL}'))
+        doc=('Lower end of range of HEALPix nested indices at',
+             f'nside=2**{LEVEL}'))
 
     nested_hi = Column(
         BigInteger, nullable=False,
-        comment=('Upper end of range of HEALPix nested indices at',
-                 f'nside=2**{LEVEL}'))
+        doc=('Upper end of range of HEALPix nested indices at',
+             f'nside=2**{LEVEL}'))
 
     def __init__(self, *args, uniq=None, **kwargs):
         super().__init__(*args, **kwargs)

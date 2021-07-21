@@ -26,7 +26,7 @@ class Point(InheritTableArgs):
     dec = Column(Float)
     nested = Column(
         BigInteger, index=True, nullable=True,
-        comment=f'HEALPix nested index at nside=2**{LEVEL}')
+        doc=f'HEALPix nested index at nside=2**{LEVEL}')
 
     @hybrid_property
     def cartesian(self):
