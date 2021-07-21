@@ -74,7 +74,7 @@ class Region:
         return relationship(cls.tile_class, backref=cls.__tablename__)
 
     @classmethod
-    def from_moc(cls, moc, *args, **kwargs):
+    def from_moc(cls, moc, tile_args={}, *args, **kwargs):
         """Create a new instance from a multi-order coverage map.
 
         Parameters
@@ -93,7 +93,8 @@ class Region:
         # but it actually returns an array of size(1, 0).
         if nested_ranges.size == 0:
             nested_ranges = nested_ranges.reshape(-1, 2)
-        tiles = [tile_class(nested_lo=int(lo), nested_hi=int(hi))
+        tiles = [tile_class(nested_lo=int(lo), nested_hi=int(hi),
+                            **tile_args)
                  for lo, hi in nested_ranges]
         return cls(*args, tiles=tiles, **kwargs)
 
