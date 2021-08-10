@@ -78,7 +78,7 @@ def test_fields(request, session, engine):
     """Generate two random point clouds."""
     Base.metadata.create_all(engine)
 
-    url = ('https://github.com/ZwickyTransientFacility/ztf_information/raw/',
+    url = ('https://github.com/ZwickyTransientFacility/ztf_information/raw/'
            'master/field_grid/ZTF_Fields.txt')
     with get_readable_fileobj(url, show_progress=False) as f:
         first_line, *lines = f
