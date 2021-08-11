@@ -45,8 +45,8 @@ class Tile:
         # This is the same expression as in astropy_healpix.level_ipix_to_uniq,
         # but reproduced here so that SQLAlchemy can map it to SQL.
         ipix = self.nested_lo
-        # FIXME: wrong, get level from log2(nested_hi - nested_lo)/2
-        return int(ipix + (1 << 2 * (LEVEL + 1)))
+        level = int(np.log2(self.nested_hi - self.nested_lo)/2)
+        return int(ipix + (1 << 2 * (level + 1)))
 
     @uniq.setter
     def uniq(self, value):
