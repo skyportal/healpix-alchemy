@@ -23,7 +23,7 @@ class Field(Region, Base):
         Integer,
         primary_key=True)
 
-    tile_class = lambda: FieldTile  # pylint: disable=E731 # noqa
+    tile_class = lambda: FieldTile # noqa
 
     tiles = relationship("FieldTile")
 
