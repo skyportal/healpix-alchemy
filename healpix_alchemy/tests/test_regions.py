@@ -4,7 +4,7 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table
 from astropy import units as u
 from astropy.utils.data import get_readable_fileobj
-from astropy_healpix import uniq_to_level_ipix, level_ipix_to_uniq
+from astropy_healpix import level_ipix_to_uniq
 from mocpy import MOC
 import numpy as np
 from sqlalchemy.ext.declarative import declarative_base
@@ -110,10 +110,8 @@ def test_tile(engine):
 
     LEVEL = MOC.HPY_MAX_NORDER
 
-    value = level_ipix_to_uniq(3, 12)
-
-    # @uniq.setter
-    level, ipix = uniq_to_level_ipix(value)
+    level, ipix = 3, 12
+    value = level_ipix_to_uniq(level, ipix)
     shift = 2 * (LEVEL - level)
     nested_lo = int(ipix << shift)
     nested_hi = int(((ipix + 1) << shift) - 1)
