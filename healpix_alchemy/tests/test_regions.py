@@ -4,6 +4,7 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table
 from astropy import units as u
 from astropy.utils.data import get_readable_fileobj
+from astropy_healpix import uniq_to_level_ipix, level_ipix_to_uniq
 from mocpy import MOC
 import numpy as np
 from sqlalchemy.ext.declarative import declarative_base
@@ -75,7 +76,7 @@ def get_footprints_grid(lon, lat, offsets):
 
 
 def test_fields(request, session, engine):
-    """Generate two random point clouds."""
+    """Generate ZTF fields and ingest them."""
     Base.metadata.create_all(engine)
 
     url = ('https://github.com/ZwickyTransientFacility/ztf_information/raw/'
@@ -101,3 +102,23 @@ def test_fields(request, session, engine):
 
     fields = session.query(Field).all()
     assert len(fields) == 18
+
+
+def test_tile(engine):
+    """Generate an example Tile and confirm index calculation."""
+    Base.metadata.create_all(engine)
+
+    LEVEL = MOC.HPY_MAX_NORDER
+
+    value = level_ipix_to_uniq(3, 12)
+
+    # @uniq.setter
+    level, ipix = uniq_to_level_ipix(value)
+    shift = 2 * (LEVEL - level)
+    nested_lo = int(ipix << shift)
+    nested_hi = int(((ipix + 1) << shift) - 1)
+
+    tile = Tile(uniq=value)
+    assert tile.nested_lo == nested_lo
+    assert tile.nested_hi == nested_hi
+    assert tile.uniq == value
