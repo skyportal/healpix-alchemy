@@ -45,8 +45,10 @@ class Tile:
         """HEALPix UNIQ pixel index."""
         # This is the same expression as in astropy_healpix.level_ipix_to_uniq,
         # but reproduced here so that SQLAlchemy can map it to SQL.
-        ipix = self.nested_lo
-        level = int(np.log2(self.nested_hi - self.nested_lo)/2)
+        level = LEVEL - (int(np.ceil(np.log2(self.nested_hi -
+                                             self.nested_lo)/2)))
+        shift = 2 * (LEVEL - level)
+        ipix = int(self.nested_lo >> shift)
         return int(ipix + (1 << 2 * (level + 1)))
 
     @uniq.setter
