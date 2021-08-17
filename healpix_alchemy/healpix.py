@@ -7,7 +7,6 @@ from mocpy import MOC
 import numpy as np
 from sqlalchemy import BigInteger, Column
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.mapper import Mapper
 
@@ -40,13 +39,13 @@ class Tile:
         if uniq is not None:
             self.uniq = uniq
 
-    @hybrid_property
+    @property
     def uniq(self):
         """HEALPix UNIQ pixel index."""
         # This is the same expression as in astropy_healpix.level_ipix_to_uniq,
         # but reproduced here so that SQLAlchemy can map it to SQL.
-        level = LEVEL - (int(np.ceil(np.log2(self.nested_hi -
-                                             self.nested_lo)/2)))
+        level = int(LEVEL - (np.ceil((np.log2(self.nested_hi -
+                                              self.nested_lo)/2))))
         shift = 2 * (LEVEL - level)
         ipix = int(self.nested_lo >> shift)
         return int(ipix + (1 << 2 * (level + 1)))
