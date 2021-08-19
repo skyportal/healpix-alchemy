@@ -6,9 +6,11 @@ from sqlalchemy.sql import and_
 from sqlalchemy.types import Float
 from sqlalchemy import BigInteger
 
+import astropy.units as u
+
 from .math import sind, cosd
 from .util import InheritTableArgs
-from .healpix import LEVEL
+from .healpix import LEVEL, HPX
 
 __all__ = ('Point',)
 
@@ -20,7 +22,11 @@ class Point(InheritTableArgs):
         super().__init__(*args, **kwargs)
         self.ra = ra
         self.dec = dec
-        self.nested = nested
+        if nested is not None:
+            self.nested = nested
+        else:
+            self.nested = HPX.lonlat_to_healpix(self.ra * u.deg,
+                                                self.dec * u.deg)
 
     ra = Column(Float)
     dec = Column(Float)
