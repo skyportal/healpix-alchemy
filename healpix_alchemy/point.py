@@ -4,9 +4,13 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.schema import Column, Index
 from sqlalchemy.sql import and_
 from sqlalchemy.types import Float
+from sqlalchemy import BigInteger
+
+import astropy.units as u
 
 from .math import sind, cosd
 from .util import InheritTableArgs
+from .healpix import LEVEL, HPX
 
 __all__ = ('Point',)
 
@@ -14,13 +18,19 @@ __all__ = ('Point',)
 class Point(InheritTableArgs):
     """Mixin class to add a point to a an SQLAlchemy declarative model."""
 
-    def __init__(self, *args, ra=None, dec=None, **kwargs):
+    def __init__(self, *args, ra=None, dec=None, nested=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.ra = ra
         self.dec = dec
+        if nested is None:
+            nested = int(HPX.lonlat_to_healpix(ra * u.deg, dec * u.deg))
+        self.nested = nested
 
     ra = Column(Float)
     dec = Column(Float)
+    nested = Column(
+        BigInteger, index=True, nullable=True,
+        doc=f'HEALPix nested index at nside=2**{LEVEL}')
 
     @hybrid_property
     def cartesian(self):
