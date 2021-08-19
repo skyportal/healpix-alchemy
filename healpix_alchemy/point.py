@@ -23,7 +23,7 @@ class Point(InheritTableArgs):
         self.ra = ra
         self.dec = dec
         if nested is None:
-            nested = HPX.lonlat_to_healpix(ra * u.deg, dec * u.deg)
+            nested = int(HPX.lonlat_to_healpix(ra * u.deg, dec * u.deg))
         self.nested = nested
 
     ra = Column(Float)
