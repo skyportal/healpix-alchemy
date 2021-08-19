@@ -29,7 +29,7 @@ class Point(InheritTableArgs):
     ra = Column(Float)
     dec = Column(Float)
     nested = Column(
-        BigInteger, index=True, nullable=True,
+        BigInteger, index=True,
         doc=f'HEALPix nested index at nside=2**{LEVEL}')
 
     @hybrid_property
