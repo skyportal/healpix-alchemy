@@ -1,3 +1,4 @@
+import inspect
 import typing
 
 from sqlalchemy.ext.declarative import declared_attr
@@ -44,3 +45,29 @@ class InheritTableArgs:
             return (*table_args, {})
         else:
             return table_args
+
+
+def default_and_onupdate(func):
+    """Provide a function to generate default values for SQLAlchemy columns.
+
+    Usage
+    -----
+
+    ::
+
+        class Foo(Base):
+            ra = Column(Float)
+            dec = Column(BigInteger)
+            x = Column(
+                Float,
+                **default_and_onupdate(
+                    lambda ra, dec: math.cos(ra) * math.sin(dec)))
+
+    """
+    keys = inspect.getargspec(func).args
+
+    def wrapper(context):
+        params = context.get_current_parameters()
+        return func(*(params[key] for key in keys))
+
+    return dict.fromkeys(('default', 'onupdate'), wrapper)
