@@ -64,6 +64,8 @@ class Point(InheritTableArgs):
         sin_radius = sind(radius)
         cos_radius = cosd(radius)
         carts = (obj.cartesian for obj in (self, other))
+        # Evaluate boolean expressions for bounding box test
+        # and dot product
         terms = ((lhs.between(rhs - 2 * sin_radius, rhs + 2 * sin_radius),
                   lhs * rhs) for lhs, rhs in zip(*carts))
         bounding_box_terms, dot_product_terms = zip(*terms)
