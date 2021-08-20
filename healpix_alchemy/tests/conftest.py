@@ -27,7 +27,10 @@ def record_database_size(record_property, engine):
 
     def func():
         (database_size,), = engine.execute(
-            'select pg_size_pretty(pg_database_size(current_database()))')
+            '''SELECT pg_size_pretty(sum(pg_relation_size(C.oid)))
+               FROM pg_class C
+               LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+               WHERE nspname NOT IN ('pg_catalog', 'information_schema')''')
         record_property('database_size', database_size)
 
     return func
