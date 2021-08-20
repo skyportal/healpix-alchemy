@@ -37,7 +37,7 @@ def record_database_size(record_property, engine):
 
 
 def pytest_terminal_summary(terminalreporter):
-    terminalreporter.section('Database size')
+    terminalreporter.section('database size')
     for report in terminalreporter.getreports(''):
         try:
             database_size = dict(report.user_properties)['database_size']
