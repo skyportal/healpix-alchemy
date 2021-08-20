@@ -64,7 +64,7 @@ def default_and_onupdate(func):
                     lambda ra, dec: math.cos(ra) * math.sin(dec)))
 
     """
-    keys = inspect.getargspec(func).args
+    keys = inspect.getfullargspec(func).args
 
     def wrapper(context):
         params = context.get_current_parameters()
