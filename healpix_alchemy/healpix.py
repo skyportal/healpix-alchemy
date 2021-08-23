@@ -1,8 +1,7 @@
 """Model base classes for multiresolution HEALPix data."""
 from astropy.coordinates import ICRS
 from astropy import units as u
-from astropy_healpix import (level_to_nside,
-                             uniq_to_level_ipix, HEALPix)
+from astropy_healpix import level_to_nside, uniq_to_level_ipix, HEALPix
 from mocpy import MOC
 import numpy as np
 from sqlalchemy import BigInteger, Column
