@@ -29,20 +29,24 @@ class Point(InheritTableArgs):
 
     x = Column(
         'x', Float, doc='Cached and precomputed Cartesian "x" coordinate',
-        **dfl(lambda ra, dec: cos(rad(ra)) * cos(rad(dec))))
+        **dfl(lambda ra, dec: cos(rad(ra)) * cos(rad(dec))
+              if ra is not None and dec is not None else None))
 
     y = Column(
         'y', Float, doc='Cached and precomputed Cartesian "y" coordinate',
-        **dfl(lambda ra, dec: sin(rad(ra)) * cos(rad(dec))))
+        **dfl(lambda ra, dec: sin(rad(ra)) * cos(rad(dec))
+              if ra is not None and dec is not None else None))
 
     z = Column(
         'z', Float, doc='Cached and precomputed Cartesian "z" coordinate',
-        **dfl(lambda dec: sin(rad(dec))))
+        **dfl(lambda dec: sin(rad(dec))
+              if dec is not None else None))
 
     nested = Column(
         BigInteger, index=True,
         doc=f'Cached and precomputed HEALPix nested index at nside=2**{LEVEL}',
-        **dfl(lambda ra, dec: int(HPX.lonlat_to_healpix(ra*u.deg, dec*u.deg))))
+        **dfl(lambda ra, dec: int(HPX.lonlat_to_healpix(ra*u.deg, dec*u.deg))
+              if ra is not None and dec is not None else None))
 
     @hybrid_property
     def cartesian(self):
