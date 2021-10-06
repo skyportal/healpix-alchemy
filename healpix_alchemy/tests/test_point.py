@@ -98,6 +98,7 @@ def test_cross_join(benchmark, session, point_clouds):
 
 
 def test_self_join(benchmark, session, point_clouds):
+    (ras, _), (decs, _) = point_clouds
 
     def do_query():
         table1 = aliased(Catalog1)
@@ -111,7 +112,15 @@ def test_self_join(benchmark, session, point_clouds):
             table1.id, table2.id
         ).all()
 
-    benchmark(do_query)
+    result = benchmark(do_query)
+    matches = np.asarray(result).reshape(-1, 2)
+
+    # Find all matches using Astropy
+    coords1 = SkyCoord(ras, decs, unit=(u.deg, u.deg))
+    expected_matches = match_sky(coords1, coords1, SEPARATION * u.deg)
+
+    # Compare SQLAlchemy result to Astropy
+    np.testing.assert_array_equal(matches, expected_matches)
 
 
 def test_cone_search(benchmark, session, point_clouds):
