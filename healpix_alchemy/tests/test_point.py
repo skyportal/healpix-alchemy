@@ -34,15 +34,15 @@ def match_sky(coords1, coords2, separation):
     """
     nresults = 0
     results = np.empty((0, 2), dtype=np.intp)
-    id1 = np.arange(len(coords1))
+    id1 = np.arange(np.size(coords1))
 
     for n in itertools.count(1):
         id2, sep, _ = coords1.match_to_catalog_sky(coords2, nthneighbor=n)
         new_results = np.column_stack((id1, id2))[sep <= separation]
         results = np.row_stack((results, new_results))
-        if len(results) > 0:
+        if np.size(results) > 0:
             results = np.unique(results, axis=0)
-        new_nresults = len(results)
+        new_nresults = np.size(results)
         if new_nresults == nresults:
             return results
         nresults = new_nresults
@@ -124,6 +124,7 @@ def test_self_join(benchmark, session, point_clouds):
 
 
 def test_cone_search(benchmark, session, point_clouds):
+    (ras, _), (decs, _) = point_clouds
     target = session.query(Catalog1).get(0)
 
     def do_query():
@@ -135,7 +136,16 @@ def test_cone_search(benchmark, session, point_clouds):
             Catalog1.id
         ).all()
 
-    benchmark(do_query)
+    result = benchmark(do_query)
+    matches = np.asarray(result).ravel()
+
+    # Find all matches using Astropy
+    coords1 = SkyCoord(ras, decs, unit=(u.deg, u.deg))
+    coords2 = SkyCoord(target.ra, target.dec, unit=(u.deg, u.deg))
+    expected_matches = match_sky(coords2, coords1, SEPARATION * u.deg)
+
+    # Compare SQLAlchemy result to Astropy
+    np.testing.assert_array_equal(matches, expected_matches[:, 1])
 
 
 def test_cone_search_literal_lhs(benchmark, session, point_clouds):
