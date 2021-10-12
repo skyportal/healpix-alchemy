@@ -16,16 +16,30 @@ classifiers = [
 python = "^3.7"
 astropy = "*"
 astropy_healpix = "*"
-mocpy = ">=0.9"
+mocpy = ">=0.10.0"
 sqlalchemy = "*"
 
 [tool.poetry.dev-dependencies]
+astroquery = "*"
 numpy = "*"
 pandas = "*"
 psycopg2-binary = "*"
 pytest = "*"
 pytest-benchmark = "*"
+pytest-doctestplus = "*"
 pytest-postgresql = "<4.0.0"  # pytest-postgresql 4.0.0 uses psycopg3, but sqlalchemy does not yet support it
+
+[tool.pytest.ini_options]
+addopts = "--doctest-glob *.md"
+doctest_plus = true
+doctest_optionflags = [
+    "FLOAT_CMP"
+]
+filterwarnings = [
+    "error::sqlalchemy.exc.SAWarning",
+    "error::DeprecationWarning",
+    "error::PendingDeprecationWarning"
+]
 
 [build-system]
 requires = ["poetry>=0.12"]

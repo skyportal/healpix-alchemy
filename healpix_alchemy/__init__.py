@@ -1,3 +1,4 @@
-from .healpix import Tile, Region
+from .types import Point, Tile
+from . import func  # noqa: F401
 
-__all__ = ('Tile', 'Region')
+__all__ = ('Point', 'Tile')

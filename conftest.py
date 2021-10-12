@@ -1,0 +1,19 @@
+"""Pytest configuration for running the doctests in README.md."""
+from unittest.mock import Mock
+import sqlalchemy as sa
+import pytest
+
+
+@pytest.fixture
+def engine(postgresql):
+    """Create an SQLAlchemy engine with a disposable PostgreSQL database."""
+    return sa.create_engine('postgresql://', poolclass=sa.pool.StaticPool,
+                            creator=lambda: postgresql)
+
+
+@pytest.fixture(autouse=True)
+def add_mock_create_engine(monkeypatch, request):
+    """Monkey patch sqlalchemy.create_engine for doctests in README.md."""
+    if request.node.name == 'README.md':
+        engine = request.getfixturevalue('engine')
+        monkeypatch.setattr(sa, 'create_engine', Mock(return_value=engine))
