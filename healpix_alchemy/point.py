@@ -16,7 +16,7 @@ __all__ = ('Point',)
 
 
 class Point(InheritTableArgs):
-    """Mixin class to add a point to a an SQLAlchemy declarative model."""
+    """Mixin class to add a point to an SQLAlchemy declarative model."""
 
     def __init__(self, *args, ra=None, dec=None, **kwargs):
         super().__init__(*args, **kwargs)
