@@ -5,7 +5,7 @@ name: Build and test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, scaling-plots ]
   pull_request:
     branches: [ main ]
 
