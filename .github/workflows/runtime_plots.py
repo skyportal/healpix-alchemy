@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import json
 
-with open('../../output.json') as f:
+with open('output.json') as f:
     data = json.load(f)
 
 def data_list_to_dict(data):
@@ -26,7 +26,7 @@ def runtime_plot(benchmark_list):
     ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_title(test + ' Runtime Plot')
-    plt.savefig('../../' + test + ' runtime plot')
+    plt.savefig(test + ' runtime plot')
 
 benchmark_list = data_list_to_dict(data)
 for test in benchmark_list:
