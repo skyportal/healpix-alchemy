@@ -52,7 +52,7 @@ jobs:
         poetry run pytest --benchmark-sort=fullname --benchmark-json output.json
     - name: Create runtime plots
       run: |
-        python3 .github/workflows/runtime_plots.py
+        poetry run .github/workflows/runtime_plots.py
     - name: Check directory
       run: |
         ls
