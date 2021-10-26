@@ -50,6 +50,9 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest --benchmark-sort=fullname --benchmark-json output.json
-    - name: Check current directory
+    - name: Create runtime plots
+      run: |
+        python3 .github/workflows/runtime_plots.py
+    - name: Check directory
       run: |
         ls
