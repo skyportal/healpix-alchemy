@@ -53,6 +53,13 @@ jobs:
     - name: Create runtime plots
       run: |
         poetry run python .github/workflows/runtime_plots.py
-    - name: Check directory
-      run: |
-        ls
+    - name: Comment on triggering event
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'This is only a test'
+          })
