@@ -50,5 +50,6 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest --benchmark-sort=fullname --benchmark-json output.json
-    - name: Comment with Pytest-Benchmark Result
-      uses: nils-braun/pytest-benchmark-commenter@v2.0.2
+    - name: Create runtime plots
+      run: |
+        python3 runtime_plots.py
