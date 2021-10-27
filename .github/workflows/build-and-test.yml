@@ -57,9 +57,12 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          github.rest.pulls.createReviewComment({
-            pull_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '![image]()'
-          })
+          console.log(context.eventName)
+          if (context.eventName === 'pull_request'){
+            github.rest.repos.createCommitComment({
+              commit_sha: context.sha,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'I should only comment on PRs'
+            })
+          }
