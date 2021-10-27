@@ -57,6 +57,7 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
+          console.log(context.sha)
           github.rest.repos.createCommitComment({
             commit_sha: context.sha,
             owner: context.repo.owner,
