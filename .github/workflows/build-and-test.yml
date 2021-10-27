@@ -51,9 +51,11 @@ jobs:
       run: |
         poetry run pytest --benchmark-sort=fullname --benchmark-json output.json
     - name: Create runtime plots
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
       run: |
         poetry run python .github/workflows/runtime_plots.py
     - name: Comment on triggering event
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
       uses: actions/github-script@v5
       with:
         script: |
