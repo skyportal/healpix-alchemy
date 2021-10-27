@@ -53,6 +53,7 @@ jobs:
     - name: Create runtime plots
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
       run: |
+        mkdir plots
         poetry run python .github/workflows/runtime_plots.py
     - name: Comment on triggering event
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
@@ -68,3 +69,9 @@ jobs:
               body: 'I should only comment on PRs'
             })
           }
+    - name: Upload plots to github artifacts
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
+      uses: actions/upload-artifact@v2
+      with:
+        name: runtime-plots
+        path: plots
