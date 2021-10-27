@@ -57,10 +57,12 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          console.log(context.sha)
-          github.rest.repos.createCommitComment({
-            commit_sha: context.sha,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: 'I should only comment on PRs'
-          })
+          if (context.eventName === 'pull_request'){
+            console.log('context.issue.number')
+            github.rest.repos.createCommitComment({
+              commit_sha: context.sha,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'I should only comment on PRs'
+            })
+          }
