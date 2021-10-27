@@ -5,7 +5,7 @@ name: Build and test
 
 on:
   push:
-    branches: [ main, scaling-plots ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -57,8 +57,8 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          console.log(context.eventName)
           if (context.eventName === 'pull_request'){
+            console.log('got here')
             github.rest.repos.createCommitComment({
               commit_sha: context.sha,
               owner: context.repo.owner,
