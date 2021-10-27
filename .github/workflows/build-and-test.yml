@@ -58,7 +58,7 @@ jobs:
       with:
         script: |
           if (context.eventName === 'pull_request'){
-            console.log(context.issue.number)
+            console.log(context.sha)
             github.rest.repos.createCommitComment({
               commit_sha: context.sha,
               owner: context.repo.owner,
