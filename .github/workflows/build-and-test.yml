@@ -57,9 +57,9 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          github.rest.repos.createCommitComment({
-            commit_sha: context.sha,
+          github.rest.pulls.createReviewComment({
+            pull_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: 'This is only a test'
+            body: '![image]()'
           })
