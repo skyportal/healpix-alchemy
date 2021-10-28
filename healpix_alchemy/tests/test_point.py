@@ -149,6 +149,7 @@ def test_cone_search(benchmark, session, point_clouds):
 
 
 def test_cone_search_literal_lhs(benchmark, session, point_clouds):
+    (ras, _), (decs, _) = point_clouds
     target = Point(ra=100.0, dec=20.0)
 
     def do_query():
@@ -160,10 +161,20 @@ def test_cone_search_literal_lhs(benchmark, session, point_clouds):
             Catalog1.id
         ).all()
 
-    benchmark(do_query)
+    result = benchmark(do_query)
+    matches = np.asarray(result).ravel()
+
+    # Find all matches using Astropy
+    coords1 = SkyCoord(ras, decs, unit=(u.deg, u.deg))
+    coords2 = SkyCoord(target.ra, target.dec, unit=(u.deg, u.deg))
+    expected_matches = match_sky(coords2, coords1, SEPARATION * u.deg)
+
+    # Compare SQLAlchemy result to Astropy
+    np.testing.assert_array_equal(matches, expected_matches[:, 1])
 
 
 def test_cone_search_literal_rhs(benchmark, session, point_clouds):
+    (ras, _), (decs, _) = point_clouds
     target = Point(ra=100.0, dec=20.0)
 
     def do_query():
@@ -175,4 +186,13 @@ def test_cone_search_literal_rhs(benchmark, session, point_clouds):
             Catalog1.id
         ).all()
 
-    benchmark(do_query)
+    result = benchmark(do_query)
+    matches = np.asarray(result).ravel()
+
+    # Find all matches using Astropy
+    coords1 = SkyCoord(ras, decs, unit=(u.deg, u.deg))
+    coords2 = SkyCoord(target.ra, target.dec, unit=(u.deg, u.deg))
+    expected_matches = match_sky(coords2, coords1, SEPARATION * u.deg)
+
+    # Compare SQLAlchemy result to Astropy
+    np.testing.assert_array_equal(matches, expected_matches[:, 1])
