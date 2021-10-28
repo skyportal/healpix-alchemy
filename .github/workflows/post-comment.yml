@@ -15,8 +15,11 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            const artifacts = await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts');
-            console.log(typeof artifacts['data']);
+            async function getArtifacts(){
+              const artifacts = await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts');
+            }
+            getArtifacts()
+            console.log(artifacts['data']);
             let id = 0;
             for (let i = 0; i < artifacts['data'].length; i++){
               if (artifacts['data'][i]['id'] > id){
