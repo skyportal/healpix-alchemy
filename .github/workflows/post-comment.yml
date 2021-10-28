@@ -36,7 +36,7 @@ jobs:
               if (context.eventName === 'pull_request'){
                 console.log(context.payload['after'])
                 github.rest.repos.createCommitComment({
-                  commit_sha: 6867989ef8145efa7c26307a8554192d63df6b89,
+                  commit_sha: '6867989ef8145efa7c26307a8554192d63df6b89',
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   body: url
