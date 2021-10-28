@@ -22,11 +22,11 @@ jobs:
               let id = 0;
               for (let i = 0; i < artifacts['data'].length; i++){
                 if (artifacts['data'][i]['id'] > id){
-                  id = artifacts['data'][i]['id']
+                  id = artifacts['data'][i]['id'];
                 }
               }
 
-              const url = github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
+              const url = await github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 artifact_id: 108053789,
