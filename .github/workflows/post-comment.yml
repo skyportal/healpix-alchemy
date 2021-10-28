@@ -29,7 +29,7 @@ jobs:
               const url = github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                artifact_id: id,
+                artifact_id: 108053789,
                 archive_format: 'zip'
               });
               console.log(url);
