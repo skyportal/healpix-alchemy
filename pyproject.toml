@@ -16,7 +16,7 @@ classifiers = [
 python = "^3.6"
 astropy = "*"
 astropy_healpix = "*"
-mocpy = "*"
+mocpy = ">=0.9"
 sqlalchemy = "*"
 
 [tool.poetry.dev-dependencies]
