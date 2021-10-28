@@ -7,7 +7,7 @@ on:
         - completed
 
 jobs:
-  # context.payload['after']
+
   post_comment:
       runs-on: ubuntu-latest
       steps:
