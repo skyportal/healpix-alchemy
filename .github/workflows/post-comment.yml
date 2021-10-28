@@ -16,6 +16,7 @@ jobs:
         with:
           script: |
             const artifacts = await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts')
+            console.log(artifacts['data'].length)
             let id = 0
             for (let i = 0; i < artifacts['data'].length; i++){
               if (artifacts['data'][i]['id'] > id){
@@ -24,14 +25,13 @@ jobs:
               }
             }
 
-            console.log()
             const url = github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
               owner: context.repo.owner,
               repo: context.repo.repo,
               artifact_id: id,
               archive_format: 'zip'
             })
-            console.log(url)
+            #console.log(url)
             if (context.eventName === 'pull_request'){
               console.log(context.payload['after'])
               github.rest.repos.createCommitComment({
