@@ -16,7 +16,7 @@ jobs:
         with:
           script: |
             const artifacts = await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts')
-            console.log(artifacts[0]['archive_download_url'])
+            console.log(artifacts)
             const url = github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
               owner: context.repo.owner,
               repo: context.repo.repo,
