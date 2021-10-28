@@ -43,4 +43,4 @@ jobs:
                 })
               }
             }
-            getArtifact()
+            getArtifact();
