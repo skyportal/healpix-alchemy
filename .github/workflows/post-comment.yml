@@ -10,7 +10,6 @@ jobs:
 
   post_comment:
       runs-on: ubuntu-latest
-      needs: build
       steps:
       - name: Comment on triggering event
         uses: actions/github-script@v5
