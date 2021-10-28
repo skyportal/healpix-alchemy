@@ -18,7 +18,7 @@ jobs:
             const url = github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              artifact_id: plots,
+              artifact_id: 'plots',
               archive_format: 'zip'
             })
 
