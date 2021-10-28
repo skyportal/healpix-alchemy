@@ -16,7 +16,7 @@ jobs:
         with:
           script: |
             const artifacts = await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts')
-            console.log(artifacts['data'].length)
+            console.log(artifacts['data'])
             let id = 0
             for (let i = 0; i < artifacts['data'].length; i++){
               if (artifacts['data'][i]['id'] > id){
