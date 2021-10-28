@@ -16,9 +16,9 @@ jobs:
         with:
           script: |
             async function getArtifacts(){
-              const artifacts = await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts');
+               return await github.request('GET /repos/bparazin/healpix-alchemy/actions/artifacts');
             }
-            getArtifacts()
+            const artifacts =getArtifacts()
             console.log(artifacts['data']);
             let id = 0;
             for (let i = 0; i < artifacts['data'].length; i++){
