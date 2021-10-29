@@ -21,6 +21,8 @@ jobs:
               console.log(artifacts['data']);
               let id = 0;
               for (let i = 0; i < artifacts['data'].length; i++){
+                console.log(i)
+                console.log(artifacts['data'][i]['id'])
                 if (artifacts['data'][i]['id'] > id){
                   id = artifacts['data'][i]['id'];
                 }
