@@ -26,6 +26,8 @@ jobs:
                 }
               }
 
+              console.log(id)
+
               const url = await github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
