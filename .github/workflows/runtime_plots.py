@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import json
+import pandas
 
-with open('output.json') as f:
+with open('benchmark_results.json') as f:
     data = json.load(f)
 
 def data_list_to_dict(data):
