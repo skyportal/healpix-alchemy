@@ -2,14 +2,14 @@
 from astropy.coordinates import ICRS
 from astropy import units as u
 from astropy_healpix import level_to_nside, uniq_to_level_ipix, HEALPix
-from mocpy import MOC
+from mocpy import MOC, IntervalSet
 import numpy as np
 from sqlalchemy import BigInteger, Column
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.mapper import Mapper
 
-LEVEL = MOC.HPY_MAX_NORDER
+LEVEL = IntervalSet.HPX_MAX_ORDER
 """Base HEALPix resolution. This is the maximum HEALPix level that can be
 stored in a signed 8-byte integer data type."""
 

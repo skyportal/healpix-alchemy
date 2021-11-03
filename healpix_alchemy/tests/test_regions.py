@@ -5,7 +5,7 @@ from astropy.table import Table
 from astropy import units as u
 from astropy.utils.data import get_readable_fileobj
 from astropy_healpix import level_ipix_to_uniq
-from mocpy import MOC
+from mocpy import MOC, IntervalSet
 import numpy as np
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, ForeignKey
@@ -108,7 +108,7 @@ def test_tile(engine):
     """Generate an example Tile and confirm index calculation."""
     Base.metadata.create_all(engine)
 
-    LEVEL = MOC.HPY_MAX_NORDER
+    LEVEL = IntervalSet.HPX_MAX_ORDER
 
     level, ipix = 3, 12
     value = level_ipix_to_uniq(level, ipix)

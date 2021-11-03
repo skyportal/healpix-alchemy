@@ -49,7 +49,7 @@ jobs:
         poetry install
     - name: Test with pytest
       run: |
-        poetry run pytest --benchmark-sort=fullname --benchmark-json benchmark_results.json
+        poetry run pytest --benchmark-group-by=fullfunc --benchmark-sort=fullname --benchmark-json benchmark_results.json
     - name: Create runtime plots
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
       run: |
