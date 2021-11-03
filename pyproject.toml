@@ -21,6 +21,7 @@ sqlalchemy = "*"
 
 [tool.poetry.dev-dependencies]
 numpy = "*"
+pandas = "*"
 psycopg2-binary = "*"
 pytest = "*"
 pytest-benchmark = "*"
