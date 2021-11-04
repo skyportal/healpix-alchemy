@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.7, 3.8, 3.9]
         os: [ubuntu-latest, macos-latest]
 
     steps:
@@ -49,4 +49,21 @@ jobs:
         poetry install
     - name: Test with pytest
       run: |
-        poetry run pytest --benchmark-group-by=fullfunc --benchmark-sort=fullname
+        poetry run pytest --benchmark-group-by=fullfunc --benchmark-sort=fullname --benchmark-json benchmark_results.json
+    - name: Create runtime plots
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
+      run: |
+        mkdir plots
+        poetry run python .github/workflows/runtime_plots.py
+    - name: Upload plots to github artifacts
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
+      uses: actions/upload-artifact@v2
+      with:
+        name: runtime-plots
+        path: plots
+    - name: Upload benchmark results to github artifacts
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
+      uses: actions/upload-artifact@v2
+      with:
+        name: benchmark-results-json
+        path: benchmark_results.json
