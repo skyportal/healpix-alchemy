@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
 import json
+
+import matplotlib.pyplot as plt
 import pandas as pd
 
 with open('benchmark_results.json') as f:
