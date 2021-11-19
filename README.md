@@ -160,7 +160,7 @@ provide any one of the following:
 * A single integer which will be interpreted as the address of the tile in the
   [UNIQ] HEALPix indexing scheme
 * A sequence of two integers, which will be interpreted as the lower and upper
-  bounds of the half-open pixel index interval at
+  bounds of the right-half-open pixel index interval at
   _level_ = _level_<sub>max</sub>
 * A string like `'[1234,5678)'`
 
