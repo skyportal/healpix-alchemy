@@ -157,8 +157,8 @@ Under the hood, it is just an `INT8RANGE`.
 
 Wherever you need to bind a Python value to a `healpix_alchemy.Tile`, you may
 provide any one of the following:
-* A single integer which will be interpreted as a the address of the tile in
-  the [UNIQ] HEALPix indexing scheme
+* A single integer which will be interpreted as the address of the tile in the
+  [UNIQ] HEALPix indexing scheme
 * A sequence of two integers, which will be interpreted as the lower and upper
   bounds of the half-open pixel index interval at
   _level_ = _level_<sub>max</sub>
