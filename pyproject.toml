@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "healpix-alchemy"
-version = "0.2.1"
+version = "1.0.0"
 description = "SQLAlchemy extensions for HEALPix spatially indexed astronomy data"
 readme = "README.md"
 authors = ["Leo Singer <leo.singer@ligo.org>"]
