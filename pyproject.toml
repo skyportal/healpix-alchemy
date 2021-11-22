@@ -7,7 +7,7 @@ authors = ["Leo Singer <leo.singer@ligo.org>"]
 license = "BSD-3-clause"
 repository = "https://github.com/skyportal/healpix-alchemy"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Topic :: Database",
     "Topic :: Scientific/Engineering :: Astronomy"
 ]
