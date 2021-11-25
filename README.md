@@ -69,14 +69,14 @@ astronomical information system. It is also used by LIGO and Virgo to store and
 communicate [gravitational-wave probability sky maps].
 
 HEALPix can be thought of as a tree. At the lowest resolution, level 0, HEALPix
-subdivides the sphere into 12 equal-area base tiles, assigned integer indicies
+subdivides the sphere into 12 equal-area base tiles, assigned integer indices
 0 through 11. At level 1, each of the 12 base tiles is subdivided into 4 tiles.
 Every subsequent level divides each of the preceding level's tiles into 4 new
 tiles. At a given level, each of the base pixels has been divided into
 4<sup>_level_</sup> pixels (_nside_ = 2<sup>_level_</sup> pixels on each side).
 Thus there are _npix_ = 12×4<sup>_level_</sup> pixels at a given resolution,
 assigned integer indices from 0 through (_npix_-1). This is called the NESTED
-indexing scheme. (There is also a RING indexing scheme in which the indicies
+indexing scheme. (There is also a RING indexing scheme in which the indices
 advance from east to west and then from north to south.)
 
 A HEALPix tile, a node in the HEALPix tree, is fully addressed by three pieces
