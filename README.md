@@ -325,7 +325,7 @@ Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
 #### What is the area of each field?
 
 ```pycon
->>> query = sa.select(
+>>> query = session.query(
 ...     FieldTile.id, sa.func.sum(FieldTile.healpix.area)
 ... ).group_by(
 ...     FieldTile.id
@@ -346,7 +346,7 @@ Field 203 has area 0.017375128741949467 steradians
 
 ```pycon
 >>> count = sa.func.count(Galaxy.id)
->>> query = sa.select(
+>>> query = session.query(
 ...     FieldTile.id, count
 ... ).filter(
 ...     FieldTile.healpix.contains(Galaxy.healpix)
@@ -370,7 +370,7 @@ Field 1740 contains 289 galaxies
 #### What is the probability density at the position of each galaxy?
 
 ```pycon
->>> query = sa.select(
+>>> query = session.query(
 ...     Galaxy.id, LocalizationTile.probdensity
 ... ).filter(
 ...     LocalizationTile.id == 1,
@@ -394,7 +394,7 @@ Galaxy 2MASX J02534120+0615562 has probability density 20.56675452367264 per ste
 
 ```pycon
 >>> prob = sa.func.sum(LocalizationTile.probdensity * (FieldTile.healpix * LocalizationTile.healpix).area)
->>> query = sa.select(
+>>> query = session.query(
 ...     FieldTile.id, prob
 ... ).filter(
 ...     LocalizationTile.id == 1,
@@ -423,12 +423,12 @@ finds the union of a set of tiles. Because it is an aggregate function, it
 should generally be used in a subquery.
 
 ```pycon
->>> union = sa.select(
+>>> union = session.query(
 ...     ha.func.union(FieldTile.healpix).label('healpix')
 ... ).filter(
 ...     FieldTile.id.between(1000, 2000)
 ... ).subquery()
->>> query = sa.select(
+>>> query = session.query(
 ...     sa.func.sum(union.columns.healpix.area)
 ... )
 >>> result = session.execute(query).scalar_one()
@@ -440,13 +440,13 @@ should generally be used in a subquery.
 #### What is the integrated probability contained within fields 1000 through 2000?
 
 ```pycon
->>> union = sa.select(
+>>> union = session.query(
 ...     ha.func.union(FieldTile.healpix).label('healpix')
 ... ).filter(
 ...     FieldTile.id.between(1000, 2000)
 ... ).subquery()
 >>> prob = sa.func.sum(LocalizationTile.probdensity * (union.columns.healpix * LocalizationTile.healpix).area)
->>> query = sa.select(
+>>> query = session.query(
 ...     prob
 ... ).filter(
 ...     LocalizationTile.id == 1,
@@ -474,13 +474,13 @@ should generally be used in a subquery.
 ... ).label(
 ...     'cum_prob'
 ... )
->>> subquery = sa.select(
+>>> subquery = session.query(
 ...     cum_area,
 ...     cum_prob
 ... ).filter(
 ...     LocalizationTile.id == 1
 ... ).subquery()
->>> query = sa.select(
+>>> query = session.query(
 ...     sa.func.max(subquery.columns.cum_area)
 ... ).filter(
 ...     subquery.columns.cum_prob <= 0.9
@@ -501,18 +501,18 @@ should generally be used in a subquery.
 ... ).label(
 ...     'cum_prob'
 ... )
->>> subquery1 = sa.select(
+>>> subquery1 = session.query(
 ...     LocalizationTile.probdensity,
 ...     cum_prob
 ... ).filter(
 ...     LocalizationTile.id == 1
 ... ).subquery()
->>> min_probdensity = sa.select(
+>>> min_probdensity = session.query(
 ...     sa.func.min(subquery1.columns.probdensity)
 ... ).filter(
 ...     subquery1.columns.cum_prob <= 0.9
 ... ).scalar_subquery()
->>> query = sa.select(
+>>> query = session.query(
 ...     Galaxy.id
 ... ).filter(
 ...     LocalizationTile.id == 1,
