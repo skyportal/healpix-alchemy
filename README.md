@@ -299,8 +299,8 @@ significantly by using [SQLAlchemy bulk insertion].
 >>> url = 'https://raw.githubusercontent.com/ZwickyTransientFacility/ztf_information/master/field_grid/ztf_field_corners.csv'
 >>> for row in Table.read(url):
 ...     field_id = int(row['field'])
-...     corners = SkyCoord([row['ra1'], row['ra2'], row['ra3'], row['ra4']],
-...                        [row['dec1'], row['dec2'], row['dec3'], row['dec4']],
+...     corners = SkyCoord(row['ra1', 'ra2', 'ra3', 'ra4'],
+...                        row['dec1', 'dec2', 'dec3', 'dec4'],
 ...                        unit=u.deg)
 ...     tiles = [FieldTile(healpix=hpx) for hpx in ha.Tile.tiles_from(corners)]
 ...     session.add(Field(id=field_id, tiles=tiles))
@@ -333,12 +333,12 @@ Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
 ...     5
 ... )
 >>> for field_id, area in session.execute(query):
-...     print('Field', field_id, 'has area', area, 'steradians')
-Field 199 has area 0.017380122168993366 steradians
-Field 200 has area 0.017376127427358248 steradians
-Field 201 has area 0.017377126112767028 steradians
-Field 202 has area 0.017376127427358248 steradians
-Field 203 has area 0.017375128741949467 steradians
+...     print('Field', field_id, 'has area', area, 'sr')
+Field 199 has area 0.017380122168993366 sr
+Field 200 has area 0.017376127427358248 sr
+Field 201 has area 0.017377126112767028 sr
+Field 202 has area 0.017376127427358248 sr
+Field 203 has area 0.017375128741949467 sr
 
 ```
 
@@ -381,12 +381,12 @@ Field 1740 contains 289 galaxies
 ...     5
 ... )
 >>> for galaxy_id, probdensity in session.execute(query):
-...     print('Galaxy', galaxy_id, 'has probability density', probdensity, 'per steradian')
-Galaxy 2MASX J02532153+0632222 has probability density 20.70119818753699 per steradian
-Galaxy 2MASX J02530482+0555431 has probability density 20.69509436913713 per steradian
-Galaxy 2MASX J02533119+0628252 has probability density 20.668990360570593 per steradian
-Galaxy 2MASX J02524584+0639206 has probability density 20.656073554123115 per steradian
-Galaxy 2MASX J02534120+0615562 has probability density 20.56675452367264 per steradian
+...     print('Galaxy', galaxy_id, 'has probability density', probdensity, 'per sr')
+Galaxy 2MASX J02532153+0632222 has probability density 20.70119818753699 per sr
+Galaxy 2MASX J02530482+0555431 has probability density 20.69509436913713 per sr
+Galaxy 2MASX J02533119+0628252 has probability density 20.668990360570593 per sr
+Galaxy 2MASX J02524584+0639206 has probability density 20.656073554123115 per sr
+Galaxy 2MASX J02534120+0615562 has probability density 20.56675452367264 per sr
 
 ```
 
@@ -432,8 +432,8 @@ should generally be used in a subquery.
 ...     sa.func.sum(union.columns.healpix.area)
 ... )
 >>> result = session.execute(query).scalar_one()
->>> print(result, 'steradians')
-9.332762083260642 steradians
+>>> print(result, 'sr')
+9.332762083260642 sr
 
 ```
 
@@ -486,8 +486,8 @@ should generally be used in a subquery.
 ...     subquery.columns.cum_prob <= 0.9
 ... )
 >>> result = session.execute(query).scalar_one()
->>> print(result, 'steradians')
-0.2766278687487106 steradians
+>>> print(result, 'sr')
+0.2766278687487106 sr
 
 ```
 
