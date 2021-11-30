@@ -223,9 +223,9 @@ Each row of the `Field` table represents a ZTF field:
 
 ```
 
-Each row of the `FieldTile` represents a multi-resolution HEALPix tile that is
-contained within the corresponding field. There is a one-to-many mapping
-between `Field` and `FieldTile`.
+Each row of the `FieldTile` table represents a multi-resolution HEALPix tile
+that is contained within the corresponding field. There is a one-to-many
+mapping between `Field` and `FieldTile`.
 
 ```pycon
 >>> class FieldTile(Base):
