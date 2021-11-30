@@ -210,7 +210,7 @@ Each row of the `Galaxy` table represents a point in a catalog:
 ```pycon
 >>> class Galaxy(Base):
 ...     id = sa.Column(sa.Text, primary_key=True)
-...     healpix = sa.Column(ha.Point, index=True, nullable=False)
+...     hpx = sa.Column(ha.Point, index=True, nullable=False)
 
 ```
 
@@ -230,28 +230,28 @@ between `Field` and `FieldTile`.
 ```pycon
 >>> class FieldTile(Base):
 ...     id = sa.Column(sa.ForeignKey(Field.id), primary_key=True)
-...     healpix = sa.Column(ha.Tile, primary_key=True, index=True)
+...     hpx = sa.Column(ha.Tile, primary_key=True, index=True)
 
 ```
 
-Each row of the `Localization` table represents a LIGO/Virgo HEALPix
+Each row of the `Skymap` table represents a LIGO/Virgo HEALPix
 localization map.
 
 ```pycon
->>> class Localization(Base):
+>>> class Skymap(Base):
 ...     id = sa.Column(sa.Integer, primary_key=True)
-...     tiles = sa.orm.relationship(lambda: LocalizationTile)
+...     tiles = sa.orm.relationship(lambda: SkymapTile)
 
 ```
 
-Each row of the `LocalizationTile` table represents a multi-resolution HEALPix
+Each row of the `SkymapTile` table represents a multi-resolution HEALPix
 tile within a LIGO/Virgo localization map. There is a one-to-many mapping
-between `Localization` and `LocalizationTile`.
+between `Skymap` and `SkymapTile`.
 
 ```pycon
->>> class LocalizationTile(Base):
-...     id = sa.Column(sa.ForeignKey(Localization.id), primary_key=True)
-...     healpix = sa.Column(ha.Tile, primary_key=True, index=True)
+>>> class SkymapTile(Base):
+...     id = sa.Column(sa.ForeignKey(Skymap.id), primary_key=True)
+...     hpx = sa.Column(ha.Tile, primary_key=True, index=True)
 ...     probdensity = sa.Column(sa.Float, nullable=False)
 
 ```
@@ -281,7 +281,7 @@ and using [SQLAlchemy bulk insertion].
 >>> data, = vizier.get_catalogs('J/ApJS/199/26/table3')
 >>> data['coord'] = SkyCoord(data['RAJ2000'], data['DEJ2000'])
 >>> for row in data:
-...     session.add(Galaxy(id=row['SimbadName'], healpix=row['coord']))
+...     session.add(Galaxy(id=row['SimbadName'], hpx=row['coord']))
 >>> session.commit()
 
 ```
@@ -302,20 +302,20 @@ significantly by using [SQLAlchemy bulk insertion].
 ...     corners = SkyCoord(row['ra1', 'ra2', 'ra3', 'ra4'],
 ...                        row['dec1', 'dec2', 'dec3', 'dec4'],
 ...                        unit=u.deg)
-...     tiles = [FieldTile(healpix=hpx) for hpx in ha.Tile.tiles_from(corners)]
+...     tiles = [FieldTile(hpx=hpx) for hpx in ha.Tile.tiles_from(corners)]
 ...     session.add(Field(id=field_id, tiles=tiles))
 >>> session.commit()
 
 ```
 
 Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
-`Localization` and `LocalizationTile` tables.
+`Skymap` and `SkymapTile` tables.
 
 ```pycon
 >>> url = 'https://gracedb.ligo.org/apiweb/superevents/S200115j/files/bayestar.multiorder.fits'
 >>> data = Table.read(url)
->>> tiles = [LocalizationTile(healpix=row['UNIQ'], probdensity=row['PROBDENSITY']) for row in data]
->>> session.add(Localization(id=1, tiles=tiles))
+>>> tiles = [SkymapTile(hpx=row['UNIQ'], probdensity=row['PROBDENSITY']) for row in data]
+>>> session.add(Skymap(id=1, tiles=tiles))
 >>> session.commit()
 
 ```
@@ -326,7 +326,7 @@ Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
 
 ```pycon
 >>> query = sa.select(
-...     FieldTile.id, sa.func.sum(FieldTile.healpix.area)
+...     FieldTile.id, sa.func.sum(FieldTile.hpx.area)
 ... ).group_by(
 ...     FieldTile.id
 ... ).limit(
@@ -349,7 +349,7 @@ Field 203 has area 0.017375128741949467 sr
 >>> query = sa.select(
 ...     FieldTile.id, count
 ... ).filter(
-...     FieldTile.healpix.contains(Galaxy.healpix)
+...     FieldTile.hpx.contains(Galaxy.hpx)
 ... ).group_by(
 ...     FieldTile.id
 ... ).order_by(
@@ -371,12 +371,12 @@ Field 1740 contains 289 galaxies
 
 ```pycon
 >>> query = sa.select(
-...     Galaxy.id, LocalizationTile.probdensity
+...     Galaxy.id, SkymapTile.probdensity
 ... ).filter(
-...     LocalizationTile.id == 1,
-...     LocalizationTile.healpix.contains(Galaxy.healpix)
+...     SkymapTile.id == 1,
+...     SkymapTile.hpx.contains(Galaxy.hpx)
 ... ).order_by(
-...     LocalizationTile.probdensity.desc()
+...     SkymapTile.probdensity.desc()
 ... ).limit(
 ...     5
 ... )
@@ -393,12 +393,12 @@ Galaxy 2MASX J02534120+0615562 has probability density 20.56675452367264 per sr
 #### What is the probability contained within each field?
 
 ```pycon
->>> prob = sa.func.sum(LocalizationTile.probdensity * (FieldTile.healpix * LocalizationTile.healpix).area)
+>>> prob = sa.func.sum(SkymapTile.probdensity * (FieldTile.hpx * SkymapTile.hpx).area)
 >>> query = sa.select(
 ...     FieldTile.id, prob
 ... ).filter(
-...     LocalizationTile.id == 1,
-...     FieldTile.healpix.overlaps(LocalizationTile.healpix)
+...     SkymapTile.id == 1,
+...     FieldTile.hpx.overlaps(SkymapTile.hpx)
 ... ).group_by(
 ...     FieldTile.id
 ... ).order_by(
@@ -424,12 +424,12 @@ should generally be used in a subquery.
 
 ```pycon
 >>> union = sa.select(
-...     ha.func.union(FieldTile.healpix).label('healpix')
+...     ha.func.union(FieldTile.hpx).label('hpx')
 ... ).filter(
 ...     FieldTile.id.between(1000, 2000)
 ... ).subquery()
 >>> query = sa.select(
-...     sa.func.sum(union.columns.healpix.area)
+...     sa.func.sum(union.columns.hpx.area)
 ... )
 >>> result = session.execute(query).scalar_one()
 >>> print(result, 'sr')
@@ -441,16 +441,16 @@ should generally be used in a subquery.
 
 ```pycon
 >>> union = sa.select(
-...     ha.func.union(FieldTile.healpix).label('healpix')
+...     ha.func.union(FieldTile.hpx).label('hpx')
 ... ).filter(
 ...     FieldTile.id.between(1000, 2000)
 ... ).subquery()
->>> prob = sa.func.sum(LocalizationTile.probdensity * (union.columns.healpix * LocalizationTile.healpix).area)
+>>> prob = sa.func.sum(SkymapTile.probdensity * (union.columns.hpx * SkymapTile.hpx).area)
 >>> query = sa.select(
 ...     prob
 ... ).filter(
-...     LocalizationTile.id == 1,
-...     union.columns.healpix.overlaps(LocalizationTile.healpix)
+...     SkymapTile.id == 1,
+...     union.columns.hpx.overlaps(SkymapTile.hpx)
 ... )
 >>> session.execute(query).scalar_one()
 0.8373173527131985
@@ -461,16 +461,16 @@ should generally be used in a subquery.
 
 ```pycon
 >>> cum_area = sa.func.sum(
-...     LocalizationTile.healpix.area
+...     SkymapTile.hpx.area
 ... ).over(
-...     order_by=LocalizationTile.probdensity.desc()
+...     order_by=SkymapTile.probdensity.desc()
 ... ).label(
 ...     'cum_area'
 ... )
 >>> cum_prob = sa.func.sum(
-...     LocalizationTile.probdensity * LocalizationTile.healpix.area
+...     SkymapTile.probdensity * SkymapTile.hpx.area
 ... ).over(
-...     order_by=LocalizationTile.probdensity.desc()
+...     order_by=SkymapTile.probdensity.desc()
 ... ).label(
 ...     'cum_prob'
 ... )
@@ -478,7 +478,7 @@ should generally be used in a subquery.
 ...     cum_area,
 ...     cum_prob
 ... ).filter(
-...     LocalizationTile.id == 1
+...     SkymapTile.id == 1
 ... ).subquery()
 >>> query = sa.select(
 ...     sa.func.max(subquery.columns.cum_area)
@@ -495,17 +495,17 @@ should generally be used in a subquery.
 
 ```pycon
 >>> cum_prob = sa.func.sum(
-...     LocalizationTile.probdensity * LocalizationTile.healpix.area
+...     SkymapTile.probdensity * SkymapTile.hpx.area
 ... ).over(
-...     order_by=LocalizationTile.probdensity.desc()
+...     order_by=SkymapTile.probdensity.desc()
 ... ).label(
 ...     'cum_prob'
 ... )
 >>> subquery1 = sa.select(
-...     LocalizationTile.probdensity,
+...     SkymapTile.probdensity,
 ...     cum_prob
 ... ).filter(
-...     LocalizationTile.id == 1
+...     SkymapTile.id == 1
 ... ).subquery()
 >>> min_probdensity = sa.select(
 ...     sa.func.min(subquery1.columns.probdensity)
@@ -515,9 +515,9 @@ should generally be used in a subquery.
 >>> query = sa.select(
 ...     Galaxy.id
 ... ).filter(
-...     LocalizationTile.id == 1,
-...     LocalizationTile.healpix.contains(Galaxy.healpix),
-...     LocalizationTile.probdensity >= min_probdensity
+...     SkymapTile.id == 1,
+...     SkymapTile.hpx.contains(Galaxy.hpx),
+...     SkymapTile.probdensity >= min_probdensity
 ... ).limit(
 ...     5
 ... )
