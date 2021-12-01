@@ -42,11 +42,15 @@ PostgreSQL databases in the cloud like [Amazon RDS] and [Google Cloud SQL].
 [MOCPy]: https://github.com/tboch/mocpy
 [multi-order coverage (MOC)]: https://ivoa.net/documents/MOC/
 [multi-order]: https://doi.org/10.1051/0004-6361/201526549
+[official Poetry installation instructions]: https://python-poetry.org/docs/#installation
 [pg_healpix]: https://github.com/segasai/pg_healpix
 [PgSphere]: https://pgsphere.github.io
+[pip]: https://pip.pypa.io/
+[Poetry]: https://python-poetry.org/
 [PostGIS]: https://postgis.net
 [PostgreSQL]: https://www.postgresql.org
 [pyranges]: https://github.com/biocore-ntnu/pyranges
+[pytest]: https://pytest.org/
 [Q3C]: https://github.com/segasai/q3c
 [range types]: https://www.postgresql.org/docs/current/rangetypes.html
 [S200115j]: https://gracedb.ligo.org/superevents/S200115j/view/
@@ -172,7 +176,40 @@ You can install `healpix_alchemy` from the Python Package Index using [pip]:
 $ pip install healpix-alchemy
 ```
 
-[pip]: https://pip.pypa.io/
+## Development Installation
+
+Contributions are welcome! This package uses the [Poetry] packaging and
+dependency tool and [pytest] for unit tests. To install `healpix_alchemy` in a
+development environment, follow these instructions.
+
+1.  Install [Poetry] by following the
+    [official Poetry installation instructions].
+
+2.  Clone this repository:
+
+    ```console
+    $ git clone https://github.com/skyportal/healpix-alchemy.git
+    $ cd healpix-alchemy
+    ```
+
+3.  Initialize the Poetry-managed virtual environment with `healpix_alchemy`
+    and all of its dependencies installed by running this command:
+
+    ```console
+    $ poetry install
+    ```
+
+    Now, you can enter a shell inside the virtual environment by running:
+
+    ```console
+    $ poetry shell
+    ```
+
+4.  To run the test suite, run this command inside the Poetry shell:
+
+    ```console
+    $ pytest
+    ```
 
 ## Example
 
