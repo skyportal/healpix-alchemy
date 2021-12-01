@@ -205,7 +205,8 @@ development environment, follow these instructions.
     $ poetry shell
     ```
 
-4.  To run the test suite, run this command inside the Poetry shell:
+4.  To run the test suite, including the examples in this README file, run this
+    command inside the Poetry shell:
 
     ```console
     $ pytest
