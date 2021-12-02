@@ -1,3 +1,5 @@
+![PyPI Status](https://img.shields.io/pypi/v/healpix-alchemy)
+
 # HEALPix Alchemy
 
 The `healpix_alchemy` Python package is an extension for the [SQLAlchemy]
