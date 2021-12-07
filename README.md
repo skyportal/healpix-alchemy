@@ -372,13 +372,13 @@ Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
 ... ).limit(
 ...     5
 ... )
->>> for field_id, area in session.execute(query):
-...     print('Field', field_id, 'has area', area, 'sr')
-Field 199 has area 0.017380122168993366 sr
-Field 200 has area 0.017376127427358248 sr
-Field 201 has area 0.017377126112767028 sr
-Field 202 has area 0.017376127427358248 sr
-Field 203 has area 0.017375128741949467 sr
+>>> for id, area in session.execute(query):
+...     print(f'Field {id} has area {area:.3g} sr')
+Field 199 has area 0.0174 sr
+Field 200 has area 0.0174 sr
+Field 201 has area 0.0174 sr
+Field 202 has area 0.0174 sr
+Field 203 has area 0.0174 sr
 
 ```
 
@@ -397,8 +397,8 @@ Field 203 has area 0.017375128741949467 sr
 ... ).limit(
 ...     5
 ... )
->>> for field_id, count in session.execute(query):
-...     print('Field', field_id, 'contains', count, 'galaxies')
+>>> for id, n in session.execute(query):
+...     print(f'Field {id} contains {n} galaxies')
 Field 1739 contains 343 galaxies
 Field 699 contains 336 galaxies
 Field 700 contains 311 galaxies
@@ -420,20 +420,21 @@ Field 1740 contains 289 galaxies
 ... ).limit(
 ...     5
 ... )
->>> for galaxy_id, probdensity in session.execute(query):
-...     print('Galaxy', galaxy_id, 'has probability density', probdensity, 'per sr')
-Galaxy 2MASX J02532153+0632222 has probability density 20.70119818753699 per sr
-Galaxy 2MASX J02530482+0555431 has probability density 20.69509436913713 per sr
-Galaxy 2MASX J02533119+0628252 has probability density 20.668990360570593 per sr
-Galaxy 2MASX J02524584+0639206 has probability density 20.656073554123115 per sr
-Galaxy 2MASX J02534120+0615562 has probability density 20.56675452367264 per sr
+>>> for id, p in session.execute(query):
+...     print(f'{id} has prob. density {p:.5g}/sr')
+2MASX J02532153+0632222 has prob. density 20.701/sr
+2MASX J02530482+0555431 has prob. density 20.695/sr
+2MASX J02533119+0628252 has prob. density 20.669/sr
+2MASX J02524584+0639206 has prob. density 20.656/sr
+2MASX J02534120+0615562 has prob. density 20.567/sr
 
 ```
 
 #### What is the probability contained within each field?
 
 ```pycon
->>> prob = sa.func.sum(SkymapTile.probdensity * (FieldTile.hpx * SkymapTile.hpx).area)
+>>> area = (FieldTile.hpx * SkymapTile.hpx).area
+>>> prob = sa.func.sum(SkymapTile.probdensity * area)
 >>> query = sa.select(
 ...     FieldTile.id, prob
 ... ).filter(
@@ -446,13 +447,13 @@ Galaxy 2MASX J02534120+0615562 has probability density 20.56675452367264 per sr
 ... ).limit(
 ...     5
 ... )
->>> for field_id, prob in engine.execute(query):
-...     print('Field', field_id, 'containment probability is', prob)
-Field 1499 containment probability is 0.1647961222933018
-Field 1446 containment probability is 0.15593990703399768
-Field 452 containment probability is 0.15420100565087086
-Field 505 containment probability is 0.09911749170919448
-Field 401 containment probability is 0.09621300206793466
+>>> for id, prob in engine.execute(query):
+...     print(f'Field {id} probability is {prob:.3g}')
+Field 1499 probability is 0.165
+Field 1446 probability is 0.156
+Field 452 probability is 0.154
+Field 505 probability is 0.0991
+Field 401 probability is 0.0962
 
 ```
 
@@ -472,8 +473,8 @@ should generally be used in a subquery.
 ...     sa.func.sum(union.columns.hpx.area)
 ... )
 >>> result = session.execute(query).scalar_one()
->>> print(result, 'sr')
-9.332762083260642 sr
+>>> print(f'{result:.3g} sr')
+9.33 sr
 
 ```
 
@@ -492,8 +493,9 @@ should generally be used in a subquery.
 ...     SkymapTile.id == 1,
 ...     union.columns.hpx.overlaps(SkymapTile.hpx)
 ... )
->>> session.execute(query).scalar_one()
-0.8373173527131985
+>>> result = session.execute(query).scalar_one()
+>>> print(f'{result:.3g}')
+0.837
 
 ```
 
@@ -526,8 +528,8 @@ should generally be used in a subquery.
 ...     subquery.columns.cum_prob <= 0.9
 ... )
 >>> result = session.execute(query).scalar_one()
->>> print(result, 'sr')
-0.2766278687487106 sr
+>>> print(f'{result:.3g} sr')
+0.277 sr
 
 ```
 
