@@ -41,6 +41,12 @@ filterwarnings = [
     "error::PendingDeprecationWarning"
 ]
 
+[tool.coverage.run]
+omit = [
+    "*/conftest.py",
+    "*/tests/*"
+]
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
