@@ -450,7 +450,7 @@ Field 1740 contains 289 galaxies
 ... ).limit(
 ...     5
 ... )
->>> for id, prob in engine.execute(query):
+>>> for id, prob in session.execute(query):
 ...     print(f'Field {id} probability is {prob:.3g}')
 Field 1499 probability is 0.165
 Field 1446 probability is 0.156
