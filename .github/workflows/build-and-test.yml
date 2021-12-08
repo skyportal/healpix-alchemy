@@ -40,9 +40,10 @@ jobs:
     - name: Install Poetry environment
       run: |
         poetry install
+        poetry run pip install pytest-cov
     - name: Test with pytest
       run: |
-        poetry run pytest --benchmark-group-by=fullfunc --benchmark-sort=fullname --benchmark-json benchmark_results.json
+        poetry run pytest --benchmark-group-by=fullfunc --benchmark-sort=fullname --benchmark-json benchmark_results.json --cov --cov-report=xml
     # - name: Create runtime plots
     #   if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
     #   run: |
@@ -54,6 +55,10 @@ jobs:
     #   with:
     #     name: runtime-plots
     #     path: plots
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        fail_ci_if_error: true
     - name: Upload benchmark results to github artifacts
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
       uses: actions/upload-artifact@v2
