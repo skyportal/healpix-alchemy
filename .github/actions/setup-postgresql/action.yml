@@ -1,0 +1,21 @@
+name: Install PostgreSQL
+description: Install the latest available version of PostgreSQL on Linux or macOS
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        RUNNER_OS: ${{runner.os}}
+      run: |
+        case "${RUNNER_OS}" in
+          Linux)
+            sudo apt-get update
+            sudo apt-get install postgresql
+            ;;
+          macOS)
+            brew install postgresql
+            ;;
+          *)
+            echo Unsupported runner OS: ${RUNNER_OS}
+            false
+        esac
