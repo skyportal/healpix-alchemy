@@ -1,6 +1,6 @@
 # Changes
 
-## 1.0.1 (unreleased)
+## 1.0.1 (2021-12-08)
 
 - Add benchmarks to unit test suite.
 
