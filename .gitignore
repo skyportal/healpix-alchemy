@@ -2,6 +2,8 @@ __pycache__
 dist
 *.egg-info
 .benchmarks
+.coverage
 .idea
 .vscode
+coverage.xml
 settings.json
