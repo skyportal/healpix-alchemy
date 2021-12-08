@@ -848,14 +848,14 @@ testing = ["pytest (>=6,!=8.1.1)", "pytest-checkdocs (>=2.4)", "pytest-cov", "py
 
 [[package]]
 name = "mirakuru"
-version = "2.5.2"
+version = "3.0.2"
 description = "Process executor (not only) for tests."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "mirakuru-2.5.2-py3-none-any.whl", hash = "sha256:90c2d90a8cf14349b2f33e6db30a16acd855499811e0312e56cf80ceacf2d3e5"},
-    {file = "mirakuru-2.5.2.tar.gz", hash = "sha256:41ca583d355eb7a6cfdc21c1aea549979d685c27b57239b88725434f115a7132"},
+    {file = "mirakuru-3.0.2-py3-none-any.whl", hash = "sha256:10e5dac4a8f26872c63e9cdfdc01b775aaa2beb3ced98abc497279d2dc525b8f"},
+    {file = "mirakuru-3.0.2.tar.gz", hash = "sha256:21192186a8680ea7567ca68170261df3785768b12962dd19fe8cccab15ad3441"},
 ]
 
 [package.dependencies]
@@ -1302,14 +1302,14 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
 name = "port-for"
-version = "0.7.2"
+version = "1.0.0"
 description = "Utility that helps with local TCP ports management. It can find an unused TCP localhost port and remember the association."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "port-for-0.7.2.tar.gz", hash = "sha256:074f29335130578aa42fef3726985e57d01c15189e509633a8a1b0b7f9226349"},
-    {file = "port_for-0.7.2-py3-none-any.whl", hash = "sha256:16b279ab4f210bad33515c45bd9af0c6e048ab24c3b6bbd9cfc7e451782617df"},
+    {file = "port_for-1.0.0-py3-none-any.whl", hash = "sha256:35a848b98cf4cc075fe80dc49ae5c3a78e3ca345a23bd39bf5252277b4eef5c2"},
+    {file = "port_for-1.0.0.tar.gz", hash = "sha256:404d161b1b2c82e2f6b31d8646396b4847d02bf5ee10068c92b7263657a14582"},
 ]
 
 [[package]]
@@ -1587,22 +1587,22 @@ test = ["numpy", "pytest-remotedata (>=0.3.2)", "sphinx"]
 
 [[package]]
 name = "pytest-postgresql"
-version = "6.0.0"
+version = "8.1.0"
 description = "Postgresql fixtures and fixture factories for Pytest."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "pytest-postgresql-6.0.0.tar.gz", hash = "sha256:6a4d8e600a2eef273f3c0e846cd0b2ea577282e252de29b4ca854bfb929bb682"},
-    {file = "pytest_postgresql-6.0.0-py3-none-any.whl", hash = "sha256:f14272bffad16a74d9a63f4cc828f243a12ae92995e236b68fd53154760e6a5a"},
+    {file = "pytest_postgresql-8.1.0-py3-none-any.whl", hash = "sha256:0868bb3374fa4f454efd73ac1d7b23d2da623782044371b84d39f83a0893f56f"},
+    {file = "pytest_postgresql-8.1.0.tar.gz", hash = "sha256:ffd24027a28aba3d05a909fb03ee87d1d474574c3504f332d6047e8699170adc"},
 ]
 
 [package.dependencies]
-mirakuru = "*"
-port-for = ">=0.6.0"
+mirakuru = ">=2.6.0"
+packaging = "*"
+port-for = ">=0.7.3"
 psycopg = ">=3.0.0"
-pytest = ">=6.2"
-setuptools = "*"
+pytest = ">=8.2"
 
 [[package]]
 name = "python-dateutil"
