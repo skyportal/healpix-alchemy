@@ -1,4 +1,5 @@
 ![PyPI Status](https://img.shields.io/pypi/v/healpix-alchemy)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/skyportal/healpix-alchemy/build-and-test)
 
 # HEALPix Alchemy
 
