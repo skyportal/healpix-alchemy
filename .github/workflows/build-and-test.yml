@@ -25,6 +25,11 @@ jobs:
       matrix:
         python-version: [3.7, 3.8, 3.9]
         os: [ubuntu-latest, macos-latest]
+        include:
+          # only run benchmarks for the following configuration...
+          - os: ubuntu-latest
+            python-version: 3.9
+            benchmark: true
 
     steps:
     - name: Check out code
@@ -42,8 +47,16 @@ jobs:
         poetry install
         poetry run pip install pytest-cov
     - name: Test with pytest
+      env:
+        BENCHMARK: ${{ matrix.benchmark }}
       run: |
-        poetry run pytest --benchmark-group-by=fullfunc --benchmark-sort=fullname --benchmark-json benchmark_results.json --cov --cov-report=xml
+        PYTESTARGS="--cov --cov-report=xml"
+        if [[ -z "${BENCHMARK}" ]]; then
+          PYTESTARGS="${PYTESTARGS} --benchmark-skip"
+        else
+          PYTESTARGS="${PYTESTARGS} --benchmark-group-by=fullfunc --benchmark-sort=fullname --benchmark-json benchmark_results.json"
+        fi
+        poetry run pytest ${PYTESTARGS}
     # - name: Create runtime plots
     #   if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
     #   run: |
@@ -60,7 +73,7 @@ jobs:
       with:
         fail_ci_if_error: true
     - name: Upload benchmark results to github artifacts
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'}}
+      if: ${{ matrix.benchmark }}
       uses: actions/upload-artifact@v2
       with:
         name: benchmark-results-json
