@@ -29,8 +29,6 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - name: Set up PostgreSQL
-      uses: ./.github/actions/setup-postgresql
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
