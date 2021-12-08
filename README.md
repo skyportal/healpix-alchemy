@@ -546,16 +546,16 @@ should generally be used in a subquery.
 ... ).label(
 ...     'cum_prob'
 ... )
->>> subquery1 = sa.select(
+>>> subquery = sa.select(
 ...     SkymapTile.probdensity,
 ...     cum_prob
 ... ).filter(
 ...     SkymapTile.id == 1
 ... ).subquery()
 >>> min_probdensity = sa.select(
-...     sa.func.min(subquery1.columns.probdensity)
+...     sa.func.min(subquery.columns.probdensity)
 ... ).filter(
-...     subquery1.columns.cum_prob <= 0.9
+...     subquery.columns.cum_prob <= 0.9
 ... ).scalar_subquery()
 >>> query = sa.select(
 ...     Galaxy.id
