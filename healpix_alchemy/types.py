@@ -37,8 +37,6 @@ class Point(sa.TypeDecorator):
         depth = np.ones(np.shape(healpixSet)) * np.log2(nside)
         return MOC.from_healpix_cells(healpixSet, depth)
 
-
-
 class Tile(sa.TypeDecorator):
 
     cache_ok = True
