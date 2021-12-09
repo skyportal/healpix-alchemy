@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from numbers import Integral
 
 from astropy.coordinates import SkyCoord
-from astropy_healpix import uniq_to_level_ipix
+from astropy_healpix import uniq_to_level_ipix, HEALPix
 from mocpy import MOC
 import numpy as np
 import sqlalchemy as sa
@@ -27,6 +27,16 @@ class Point(sa.TypeDecorator):
         if isinstance(value, np.int64):
             value = int(value)
         return value
+
+    def to_moc(self, rangeSet, nside, index):
+        #make ranges into healpix lists
+        healpixSet = np.unique(np.concatenate([np.arange(start, stop, 1) for (start, stop) in rangeSet]))
+        if index.lower() == "ring":
+            hp = HEALPix(nside = nside, order = 'ring')
+            healpixSet = hp.ring_to_nested(healpixSet)
+        depth = np.ones(np.shape(healpixSet)) * np.log2(nside)
+        return MOC.from_healpix_cells(healpixSet, depth)
+
 
 
 class Tile(sa.TypeDecorator):
