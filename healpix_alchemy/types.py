@@ -29,19 +29,12 @@ class Point(sa.TypeDecorator):
         return value
 
     def to_moc(self, rangeSet, nside, index):
-        #make ranges into healpix lists
         healpixSet = np.unique(np.concatenate([np.arange(start, stop, 1) for
                                                (start, stop) in rangeSet]))
-
-        #Convert to nested if need be
         if index.lower() == "ring":
-            hp = HEALPix(nside = nside, order = 'ring')
+            hp = HEALPix(nside=nside, order='ring')
             healpixSet = hp.ring_to_nested(healpixSet)
-
-        #Create depth array
         depth = np.ones(np.shape(healpixSet)) * np.log2(nside)
-
-        #Convert to an MOC
         return MOC.from_healpix_cells(healpixSet, depth)
 
 
