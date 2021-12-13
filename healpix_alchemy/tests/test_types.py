@@ -2,20 +2,19 @@ import numpy as np
 from mocpy import MOC
 import itertools
 from astropy_healpix import HEALPix
-import pytest
 
 from .. import types
 
 
 def random_MOC(max_l):
-    json = {str(l): list(
+    json = {str(level): list(
         np.unique(
-            np.random.randint(0, 12 * (4 ** l),
-                              np.random.randint(12 * (4 ** l)))))
-        for l in range(max_l)}
+            np.random.randint(0, 12 * (4 ** level),
+                              np.random.randint(12 * (4 ** level)))))
+        for level in range(max_l)}
     return MOC.from_json(json), json
 
-#return integer intervals as [start, stop)
+
 def to_ranges(iterable):
     iterable = sorted(set(iterable))
     for key, group in itertools.groupby(enumerate(iterable),
@@ -37,9 +36,9 @@ def test_to_moc_ring():
     ring_hpx_list = hp.nested_to_ring(nested_hpx_list)
     ring_hpx_ranges = to_ranges(ring_hpx_list)
     point = types.Point()
-    assert point.to_moc(rangeSet = ring_hpx_ranges,
-                              nside = 2**(l_lim-1),
-                              index = 'ring') == moc
+    assert point.to_moc(rangeSet=ring_hpx_ranges,
+                              nside=2**(l_lim-1),
+                              index='ring') == moc
 
 
 def test_to_moc_nested():
@@ -53,6 +52,6 @@ def test_to_moc_nested():
     nested_hpx_list = json[str(l_lim-1)]
     nested_hpx_ranges = to_ranges(nested_hpx_list)
     point = types.Point()
-    assert point.to_moc(rangeSet = nested_hpx_ranges,
-                              nside = 2**(l_lim-1),
-                              index = 'nested') == moc
+    assert point.to_moc(rangeSet=nested_hpx_ranges,
+                              nside=2**(l_lim-1),
+                              index='nested') == moc
