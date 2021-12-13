@@ -11,7 +11,7 @@ def random_MOC(max_l):
         np.unique(
             np.random.randint(0, 12 * (4 ** level),
                               np.random.randint(12 * (4 ** level)))))
-        for level in range(max_l)}
+            for level in range(max_l)}
     return MOC.from_json(json), json
 
 
@@ -37,8 +37,8 @@ def test_to_moc_ring():
     ring_hpx_ranges = to_ranges(ring_hpx_list)
     point = types.Point()
     assert point.to_moc(rangeSet=ring_hpx_ranges,
-                              nside=2**(l_lim-1),
-                              index='ring') == moc
+                        nside=2**(l_lim-1),
+                        index='ring') == moc
 
 
 def test_to_moc_nested():
@@ -53,5 +53,5 @@ def test_to_moc_nested():
     nested_hpx_ranges = to_ranges(nested_hpx_list)
     point = types.Point()
     assert point.to_moc(rangeSet=nested_hpx_ranges,
-                              nside=2**(l_lim-1),
-                              index='nested') == moc
+                        nside=2**(l_lim-1),
+                        index='nested') == moc
