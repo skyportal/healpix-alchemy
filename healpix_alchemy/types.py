@@ -33,7 +33,7 @@ class Point(sa.TypeDecorator):
         depth = int(np.log2(nside))
         MOCstr = f'{depth}/' + ' '.join(map(lambda x: f'{x[0]}-{x[1]-1}',
                                             rangeSet))
-        return MOC.from_str(MOCstr)
+        return MOC.from_string(MOCstr)
 
 
 class Tile(sa.TypeDecorator):
