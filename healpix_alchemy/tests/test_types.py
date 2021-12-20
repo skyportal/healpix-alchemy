@@ -2,17 +2,10 @@ import numpy as np
 from mocpy import MOC
 import itertools
 from astropy_healpix import HEALPix
+from astropy.coordinates import Angle, Longitude, Latitude
+import astropy.units as u
 
 from .. import types
-
-
-def random_MOC(max_l):
-    json = {str(level): list(
-        np.unique(
-            np.random.randint(0, 12 * (4 ** level),
-                              np.random.randint(12 * (4 ** level)))))
-            for level in range(max_l)}
-    return MOC.from_json(json), json
 
 
 def to_ranges(iterable):
@@ -23,35 +16,16 @@ def to_ranges(iterable):
         yield group[0][1], group[-1][1]+1
 
 
-def test_to_moc_ring():
-    l_lim = 12
-    moc, json = random_MOC(l_lim)
-    for level in range(l_lim-1):
-        for pixel in json[str(level)]:
-            for i in range(4):
-                json[str(level + 1)].append(pixel * 4 + i)
-        json[str(level + 1)] = np.unique(json[str(level + 1)])
-    nested_hpx_list = json[str(l_lim-1)]
-    hp = HEALPix(nside=2**(l_lim-1), order='ring')
-    ring_hpx_list = hp.nested_to_ring(nested_hpx_list)
-    ring_hpx_ranges = to_ranges(ring_hpx_list)
-    point = types.Point()
-    assert point.to_moc(rangeSet=ring_hpx_ranges,
-                        nside=2**(l_lim-1),
-                        index='ring') == moc
+def test_to_moc():
+    depth = 5
+    rng = np.random.default_rng()
+    lon = Longitude(360 * rng.random() * u.deg)
+    lat = Latitude((180 * rng.random() - 90) * u.deg)
+    radius = Angle(rng.normal(loc=10, scale=2.5) * u.deg)
+    moc = MOC.from_cone(lon, lat, radius, depth)
+    hp = HEALPix(nside=2**depth, order='nested')
+    healpix_list = hp.cone_search_lonlat(lon, lat, radius)
+    nested_hpx_ranges = [item for item in to_ranges(healpix_list)]
 
-
-def test_to_moc_nested():
-    l_lim = 12
-    moc, json = random_MOC(l_lim)
-    for level in range(l_lim-1):
-        for pixel in json[str(level)]:
-            for i in range(4):
-                json[str(level + 1)].append(pixel * 4 + i)
-        json[str(level + 1)] = np.unique(json[str(level + 1)])
-    nested_hpx_list = json[str(l_lim-1)]
-    nested_hpx_ranges = to_ranges(nested_hpx_list)
-    point = types.Point()
-    assert point.to_moc(rangeSet=nested_hpx_ranges,
-                        nside=2**(l_lim-1),
-                        index='nested') == moc
+    assert types.Point.to_moc(rangeSet=nested_hpx_ranges,
+                        nside=2**depth) == moc
