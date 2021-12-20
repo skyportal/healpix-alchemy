@@ -28,7 +28,8 @@ class Point(sa.TypeDecorator):
             value = int(value)
         return value
 
-    def to_moc(self, rangeSet, nside, index):
+    @classmethod
+    def to_moc(cls, rangeSet, nside, index):
         healpixSet = np.unique(np.concatenate([np.arange(start, stop, 1) for
                                                (start, stop) in rangeSet]))
         if index.lower() == "ring":
