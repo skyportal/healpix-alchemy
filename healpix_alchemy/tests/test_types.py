@@ -29,4 +29,4 @@ def test_to_moc():
     nested_hpx_ranges = [item for item in to_ranges(healpix_list)]
 
     assert types.Point.to_moc(rangeSet=nested_hpx_ranges,
-                       nside=2**depth) == moc
+                              nside=2**depth) == moc
