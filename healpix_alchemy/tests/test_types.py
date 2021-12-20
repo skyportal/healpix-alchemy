@@ -17,15 +17,16 @@ def to_ranges(iterable):
 
 
 def test_to_moc():
-    depth = 5
+    depth = 10
     rng = np.random.default_rng()
     lon = Longitude(360 * rng.random() * u.deg)
     lat = Latitude((180 * rng.random() - 90) * u.deg)
     radius = Angle(rng.normal(loc=10, scale=2.5) * u.deg)
-    moc = MOC.from_cone(lon, lat, radius, depth)
     hp = HEALPix(nside=2**depth, order='nested')
     healpix_list = hp.cone_search_lonlat(lon, lat, radius)
+    depth_list = depth * np.ones(np.shape(healpix_list))
+    moc = MOC.from_healpix_cells(healpix_list, depth_list)
     nested_hpx_ranges = [item for item in to_ranges(healpix_list)]
 
     assert types.Point.to_moc(rangeSet=nested_hpx_ranges,
-                        nside=2**depth) == moc
+                       nside=2**depth) == moc
