@@ -119,4 +119,4 @@ def test_to_moc(bench, random_moc_from_cone):
     # Expected result
     expected = random_moc_from_cone
 
-    assert Tile.moc_from_tiles(rangeset, 2**29) == expected
+    assert expected == Tile.moc_from_tiles(rangeset, 2**29)
