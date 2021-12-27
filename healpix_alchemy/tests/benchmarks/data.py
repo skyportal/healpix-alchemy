@@ -7,7 +7,8 @@ We use the psycopg2 ``copy_from`` rather than SQLAlchemy for fast insertion.
 """
 import io
 
-from astropy.coordinates import SkyCoord, uniform_spherical_random_surface
+from astropy.coordinates import (SkyCoord, uniform_spherical_random_surface,
+                                 Angle, Longitude, Latitude)
 from astropy import units as u
 from mocpy import MOC
 import numpy as np
@@ -15,13 +16,14 @@ import pytest
 
 from ...constants import HPX, LEVEL, PIXEL_AREA
 from ...types import Tile
-from .models import Galaxy, Field, FieldTile, Skymap, SkymapTile
+from .models import Galaxy, Field, FieldTile, Skymap, SkymapTile, TileList
 
 (
     RANDOM_GALAXIES_SEED,
     RANDOM_FIELDS_SEED,
-    RANDOM_SKY_MAP_SEED
-) = np.random.SeedSequence(12345).spawn(3)
+    RANDOM_SKY_MAP_SEED,
+    RANDOM_MOC_SEED
+) = np.random.SeedSequence(12345).spawn(4)
 
 
 def get_ztf_footprint_corners():
@@ -122,3 +124,17 @@ def get_random_sky_map(n, cursor):
     cursor.copy_from(f, SkymapTile.__tablename__)
 
     return tiles, probdensity
+
+
+def get_random_moc_from_cone(depth, cursor):
+    rng = np.random.default_rng(RANDOM_MOC_SEED)
+    # Randomly choose lon, lat & radius for cone search
+    lon = Longitude(360 * rng.random() * u.deg)
+    lat = Latitude((180 * rng.random() - 90) * u.deg)
+    radius = Angle(rng.normal(loc=10, scale=2.5) * u.deg)
+    moc = MOC.from_cone(lon, lat, radius, depth)
+
+    f = io.StringIO('\n'.join(Tile.tiles_from_moc(moc)))
+    cursor.copy_from(f, TileList.__tablename__)
+
+    return moc, depth

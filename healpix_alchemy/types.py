@@ -28,13 +28,6 @@ class Point(sa.TypeDecorator):
             value = int(value)
         return value
 
-    @classmethod
-    def to_moc(cls, rangeSet, nside):
-        depth = int(np.log2(nside))
-        MOCstr = f'{depth}/' + ' '.join(map(lambda x: f'{x[0]}-{x[1]-1}',
-                                            rangeSet))
-        return MOC.from_string(MOCstr)
-
 
 class Tile(sa.TypeDecorator):
 
@@ -86,6 +79,14 @@ class Tile(sa.TypeDecorator):
     @classmethod
     def tiles_from_moc(cls, moc):
         return (f'[{lo},{hi})' for lo, hi in moc._interval_set.nested)
+
+    @classmethod
+    def moc_from_tiles(cls, rangeSet, nside):
+        depth = int(np.log2(nside))
+        print(rangeSet[0])
+        MOCstr = f'{depth}/' + ' '.join(map(lambda x: f'{x[0]}-{x[1]-1}',
+                                            rangeSet))
+        return MOC.from_string(MOCstr)
 
 
 @sa.event.listens_for(sa.Index, 'after_parent_attach')
