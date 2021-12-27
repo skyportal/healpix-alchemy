@@ -137,4 +137,4 @@ def get_random_moc_from_cone(depth, cursor):
     f = io.StringIO('\n'.join(Tile.tiles_from_moc(moc)))
     cursor.copy_from(f, TileList.__tablename__)
 
-    return moc, depth
+    return moc

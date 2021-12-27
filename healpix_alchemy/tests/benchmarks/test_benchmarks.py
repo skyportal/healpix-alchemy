@@ -3,6 +3,7 @@ from functools import reduce
 import numpy as np
 import sqlalchemy as sa
 import pytest
+import re
 
 from ... import func
 from .models import Galaxy, FieldTile, SkymapTile, TileList
@@ -110,12 +111,15 @@ def test_fields_in_90pct_credible_region(bench, random_fields, random_sky_map):
 def test_to_moc(bench, random_moc_from_cone):
     # Assemble Query
     query = sa.select(TileList.hpx)
-    rangeset = bench(query)
+    rangeset = map(lambda x:
+                   (int(re.split("[,]|[(]", str(x))[2]),
+                    int(re.split("[,]|[(]", str(x))[3])),
+                   bench(query))
 
     # Expected result
-    expected, depth = random_moc_from_cone
+    expected = random_moc_from_cone
 
-    assert Tile.moc_from_tiles(rangeset, depth) == expected
+    assert Tile.moc_from_tiles(rangeset, 2**29) == expected
 
     #assert types.Point.to_moc(rangeSet=nested_hpx_ranges,
     #                          nside=2**depth) == moc

@@ -83,7 +83,6 @@ class Tile(sa.TypeDecorator):
     @classmethod
     def moc_from_tiles(cls, rangeSet, nside):
         depth = int(np.log2(nside))
-        print(rangeSet[0])
         MOCstr = f'{depth}/' + ' '.join(map(lambda x: f'{x[0]}-{x[1]-1}',
                                             rangeSet))
         return MOC.from_string(MOCstr)
