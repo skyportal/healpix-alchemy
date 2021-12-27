@@ -120,6 +120,3 @@ def test_to_moc(bench, random_moc_from_cone):
     expected = random_moc_from_cone
 
     assert Tile.moc_from_tiles(rangeset, 2**29) == expected
-
-    #assert types.Point.to_moc(rangeSet=nested_hpx_ranges,
-    #                          nside=2**depth) == moc
