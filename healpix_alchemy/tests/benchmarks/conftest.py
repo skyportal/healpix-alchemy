@@ -1,14 +1,24 @@
 import numpy as np
 import sqlalchemy as sa
 import pytest
+from pytest_postgresql.janitor import DatabaseJanitor
 
 from . import data, models
 
 
 @pytest.fixture
-def engine(postgresql):
-    return sa.create_engine('postgresql://', poolclass=sa.pool.StaticPool,
-                            creator=lambda: postgresql)
+def engine(postgresql_proc):
+    """Create an SQLAlchemy engine with a disposable PostgreSQL database."""
+    host = postgresql_proc.host
+    port = postgresql_proc.port
+    user = postgresql_proc.user
+    password = postgresql_proc.password
+    db = postgresql_proc.dbname
+    version = postgresql_proc.version
+
+    url = sa.engine.URL.create('postgresql', user, password, host, port, db)
+    with DatabaseJanitor(user, host, port, db, version, password):
+        yield sa.create_engine(url)
 
 
 @pytest.fixture

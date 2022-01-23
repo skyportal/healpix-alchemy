@@ -23,11 +23,12 @@ sqlalchemy = ">=1.4"
 astroquery = "*"
 numpy = "*"
 pandas = "*"
+psycopg = {version="*", extras=["binary"]}  # for pytest-postgresql
 psycopg2-binary = "*"
 pytest = "*"
 pytest-benchmark = "*"
 pytest-doctestplus = "*"
-pytest-postgresql = "<4.0.0"  # pytest-postgresql 4.0.0 uses psycopg3, but sqlalchemy does not yet support it
+pytest-postgresql = "*"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-glob *.md"
