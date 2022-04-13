@@ -3,6 +3,14 @@
 [![codecov](https://codecov.io/gh/skyportal/healpix-alchemy/branch/main/graph/badge.svg?token=T34O35OM0V)](https://codecov.io/gh/skyportal/healpix-alchemy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5768564.svg)](https://doi.org/10.5281/zenodo.5768564)
 
+To acknowledge HEALPix Alchemy in a scholarly article, please cite the following two references.
+
+#### HEALPix Alchemy paper
+Singer, L. P., Parazin, B., Coughlin, M. W., et al. (2022). "HEALPix Alchemy: Fast All-Sky Geometry and Image Arithmetic in a Relational Database for Multimessenger Astronomy Brokers." *Astronomical Journal* **163** 209. https://doi.org/10.3847/1538-3881/ac5ab8
+
+#### Code archive on Zenodo
+Singer, L. P., Parazin, B., Coughlin, M. W., et al. (2022). "skyportal/healpix-alchemy: Version 1.0.1." https://doi.org/10.5281/zenodo.5768564
+
 # HEALPix Alchemy
 
 The `healpix_alchemy` Python package is an extension for the [SQLAlchemy]
