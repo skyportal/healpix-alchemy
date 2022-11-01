@@ -371,6 +371,15 @@ Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
 
 ```
 
+Last, run [`ANALYZE`](https://www.postgresql.org/docs/current/sql-analyze.html)
+to prepare the data for use:
+
+```pycon
+>>> session.execute('ANALYZE')
+<sqlalchemy.engine.cursor.CursorResult object at 0x...>
+
+```
+
 ### Sample Queries
 
 #### What is the area of each field?
