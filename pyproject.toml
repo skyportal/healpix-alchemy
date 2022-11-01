@@ -33,6 +33,7 @@ pytest-postgresql = "<4.0.0"  # pytest-postgresql 4.0.0 uses psycopg3, but sqlal
 addopts = "--doctest-glob *.md"
 doctest_plus = true
 doctest_optionflags = [
+    "ELLIPSIS",
     "FLOAT_CMP"
 ]
 filterwarnings = [
