@@ -103,32 +103,33 @@ def get_random_fields(n, cursor):
 
 def get_random_sky_map(n, cursor):
     rng = np.random.default_rng(RANDOM_SKY_MAP_SEED)
-    # Make a randomly subdivided sky map
-    npix = HPX.npix
-    tiles = np.arange(0, npix + 1, 4 ** LEVEL).tolist()
-    while len(tiles) < n:
-        i = rng.integers(len(tiles))
-        lo = 0 if i == 0 else tiles[i - 1]
-        hi = tiles[i]
-        diff = (hi - lo) // 4
-        if diff == 0:
-            continue
-        tiles.insert(i, hi - diff)
-        tiles.insert(i, hi - 2 * diff)
-        tiles.insert(i, hi - 3 * diff)
+    for skymap_id in range(1, 0, -1):
+        # Make a randomly subdivided sky map
+        npix = HPX.npix
+        tiles = np.arange(0, npix + 1, 4 ** LEVEL).tolist()
+        while len(tiles) < n:
+            i = rng.integers(len(tiles))
+            lo = 0 if i == 0 else tiles[i - 1]
+            hi = tiles[i]
+            diff = (hi - lo) // 4
+            if diff == 0:
+                continue
+            tiles.insert(i, hi - diff)
+            tiles.insert(i, hi - 2 * diff)
+            tiles.insert(i, hi - 3 * diff)
 
-    probdensity = rng.uniform(0, 1, size=len(tiles) - 1)
-    probdensity /= np.sum(np.diff(tiles) * probdensity) * PIXEL_AREA
+        probdensity = rng.uniform(0, 1, size=len(tiles) - 1)
+        probdensity /= np.sum(np.diff(tiles) * probdensity) * PIXEL_AREA
 
-    f = io.StringIO('1')
-    cursor.copy_from(f, Skymap.__tablename__)
+        f = io.StringIO(f'{skymap_id}')
+        cursor.copy_from(f, Skymap.__tablename__)
 
-    f = io.StringIO(
-        '\n'.join(
-            f'1\t[{lo},{hi})\t{p}'
-            for lo, hi, p in zip(tiles[:-1], tiles[1:], probdensity)
+        f = io.StringIO(
+            '\n'.join(
+                f'{skymap_id}\t[{lo},{hi})\t{p}'
+                for lo, hi, p in zip(tiles[:-1], tiles[1:], probdensity)
+            )
         )
-    )
-    cursor.copy_from(f, SkymapTile.__tablename__)
+        cursor.copy_from(f, SkymapTile.__tablename__)
 
     return tiles, probdensity
