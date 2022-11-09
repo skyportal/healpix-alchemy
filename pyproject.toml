@@ -19,7 +19,7 @@ astropy_healpix = "*"
 mocpy = ">=0.10.0"
 sqlalchemy = ">=1.4"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 astroquery = "*"
 numpy = "*"
 pandas = "*"
@@ -48,5 +48,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry-core"]
 build-backend = "poetry.masonry.api"
