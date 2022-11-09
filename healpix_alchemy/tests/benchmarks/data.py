@@ -25,7 +25,17 @@ from .models import Galaxy, Field, FieldTile, Skymap, SkymapTile
 
 
 def get_ztf_footprint_corners():
-    """Return the corner offsets of the ZTF footprint."""
+    """Return the corner offsets of the ZTF footprint.
+
+    Notes
+    -----
+    This polygon is smaller than the spatial extent of the true ZTF field of
+    view, but has approximately the same area because the real ZTF field of
+    view has chip gaps.
+
+    For the real ZTF footprint, use the region file
+    https://github.com/skyportal/skyportal/blob/main/data/ZTF_Region.reg.
+    """
     x = 6.86 / 2
     return [-x, +x, +x, -x] * u.deg, [-x, -x, +x, +x] * u.deg
 
