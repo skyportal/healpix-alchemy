@@ -347,7 +347,7 @@ significantly by using [SQLAlchemy bulk insertion].
 >>> from astropy.table import Table
 >>> from astropy.coordinates import SkyCoord
 >>> from astropy import units as u
->>> url = 'https://raw.githubusercontent.com/ZwickyTransientFacility/ztf_information/master/field_grid/ztf_field_corners.csv'
+>>> url = 'https://raw.githubusercontent.com/ZwickyTransientFacility/ztf_information/9fd0ba8842709f42a134c88827309ccab728fcb7/field_grid/ztf_field_corners.csv'
 >>> for row in Table.read(url):
 ...     field_id = int(row['field'])
 ...     corners = SkyCoord(row['ra1', 'ra2', 'ra3', 'ra4'],
