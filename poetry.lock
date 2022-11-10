@@ -669,6 +669,23 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "regions"
+version = "0.7"
+description = "Astropy coordinated package for region handling"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+astropy = ">=5.0"
+numpy = ">=1.18"
+
+[package.extras]
+all = ["matplotlib (>=3.1)", "shapely"]
+docs = ["matplotlib (>=3.1)", "shapely", "sphinx-astropy"]
+test = ["pytest-arraydiff", "pytest-astropy"]
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -829,7 +846,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "625f07f698023e02da75e678bb3d4996e46f075309a3fabb46afcce6840723d0"
+content-hash = "2e5188bf874d16f90b32b20525dd61954e6b43ba5c61d15163baba50c00197dc"
 
 [metadata.files]
 astropy = [
@@ -1753,6 +1770,29 @@ pyyaml = [
     {file = "PyYAML-6.0-cp39-cp39-win32.whl", hash = "sha256:b5b9eccad747aabaaffbc6064800670f0c297e52c12754eb1d976c57e4f74dcb"},
     {file = "PyYAML-6.0-cp39-cp39-win_amd64.whl", hash = "sha256:b3d267842bf12586ba6c734f89d1f5b871df0273157918b0ccefa29deb05c21c"},
     {file = "PyYAML-6.0.tar.gz", hash = "sha256:68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2"},
+]
+regions = [
+    {file = "regions-0.7-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:a89453a27992c517554d810931af965d997967344d133b660906947b50024a7a"},
+    {file = "regions-0.7-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:04ebb9653c150eeb47c3326bbe39f49312bedae6fbd2bdf1edf330aa4ff698dd"},
+    {file = "regions-0.7-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ccb927a09b26928ee68f49b1755f430969e4563d80a7d0d633b920e99f40349c"},
+    {file = "regions-0.7-cp310-cp310-win32.whl", hash = "sha256:df4e52f3e69caae1aa1b993347ad4e12f8ba3a5eb0e93e27efd242ef39f417ac"},
+    {file = "regions-0.7-cp310-cp310-win_amd64.whl", hash = "sha256:906cbfaa191f58e55fd3792ee898ebde1cf59c9a86da6777f683422bc56747d2"},
+    {file = "regions-0.7-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:908554c9badd08d24567d2e6b78702b2f195ec67ce380c9a698c07e631f7451e"},
+    {file = "regions-0.7-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:8efa73b3ccd71e1098fb4661c317a7d1dddc7721c497ae7dad6a39c6a3135dcf"},
+    {file = "regions-0.7-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:daf87920dfef19fb421d0e3293f28384e59afd425e9c5e8e6bdcd6c99eba3c2e"},
+    {file = "regions-0.7-cp311-cp311-win32.whl", hash = "sha256:b5a54ada42114b345edbf43dc63df9995ca04f1b496187e9c9680827c57af8d1"},
+    {file = "regions-0.7-cp311-cp311-win_amd64.whl", hash = "sha256:5c5668f9c9dc88d3627f7772ea15df3df4987802a2bc3247a9472ebcc3d1621c"},
+    {file = "regions-0.7-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:f77071fe57e8092fc9c615d00cd75545bc90f126de638aacb1eac6c386658844"},
+    {file = "regions-0.7-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:5f3bb69b75ff5b26ac606cf5e2aa0e8e90ed75b6b8c21c22230c9da1c52f5bae"},
+    {file = "regions-0.7-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e089a7282433fa7927dec2a6610bced214d581cc47d237e516e7d7e1de822005"},
+    {file = "regions-0.7-cp38-cp38-win32.whl", hash = "sha256:39cad6568ccd951e79070b2e4197b1e2aa0b9736ebb4d8ef4c6a742957400997"},
+    {file = "regions-0.7-cp38-cp38-win_amd64.whl", hash = "sha256:f16951f95a4103f5ae85c437443d952e9ad5898bde58eb59f00630c92459303a"},
+    {file = "regions-0.7-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:f727270fb81b56de447f952f07e5fa98c1329a40b3f7e0c072d93aede5fb9c7e"},
+    {file = "regions-0.7-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:1fee607752e15e712f088c03a43e22b46779273316ebc97b442b2da91a81cf60"},
+    {file = "regions-0.7-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c5a98b1fef5273883816561ea258ae16517eca33ec11858d0a3da0ad5ac65458"},
+    {file = "regions-0.7-cp39-cp39-win32.whl", hash = "sha256:aaff5e1199d282c0781e9e63093214006d92d4e22e27332fb13168f6d69141a4"},
+    {file = "regions-0.7-cp39-cp39-win_amd64.whl", hash = "sha256:6cf77c098732e619a6f188fb4a34e04537dfbd574480efbdff47fdf3fd4f771e"},
+    {file = "regions-0.7.tar.gz", hash = "sha256:75387ef2dfcca46c7716803a81c68dba3669005e01ddf6d0bf254edb677a9a23"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},

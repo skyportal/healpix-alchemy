@@ -1,4 +1,5 @@
 from functools import reduce
+import time
 
 import numpy as np
 import sqlalchemy as sa
