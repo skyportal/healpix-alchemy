@@ -108,10 +108,12 @@ def bench_and_check(bench):
 #     bench(query)
 
 
-def test_integrated_probability(bench, random_fields, random_sky_map):
+def test_integrated_probability(bench, ztf_fields, random_sky_map):
     """Find integrated probability within union of fields."""
     union = sa.select(
         func.union(FieldTile.hpx).label('hpx')
+    ).filter(
+        FieldTile.id.between(100, 120)
     ).subquery()
 
     area = (union.columns.hpx * SkymapTile.hpx).area
@@ -124,4 +126,5 @@ def test_integrated_probability(bench, random_fields, random_sky_map):
         union.columns.hpx.overlaps(SkymapTile.hpx)
     )
 
+    # Run benchmark
     bench(query)

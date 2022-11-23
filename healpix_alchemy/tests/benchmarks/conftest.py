@@ -33,9 +33,14 @@ def random_galaxies(cursor, tables):
     return data.get_random_galaxies(40_000, cursor)
 
 
-@pytest.fixture(params=np.geomspace(1, 10_000, 10, dtype=int).tolist())
+@pytest.fixture(params=[2000])
 def random_fields(cursor, tables, request):
     return data.get_random_fields(request.param, cursor)
+
+
+@pytest.fixture()
+def ztf_fields(cursor, tables):
+    return data.get_ztf_fields(cursor)
 
 
 @pytest.fixture

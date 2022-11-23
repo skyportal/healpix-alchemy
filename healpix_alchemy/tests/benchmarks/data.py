@@ -10,6 +10,7 @@ import functools
 
 from astropy.coordinates import SkyCoord, uniform_spherical_random_surface
 from astropy import units as u
+from astropy.table import Table
 from mocpy import MOC
 import numpy as np
 import pytest
@@ -73,6 +74,13 @@ def get_random_points(n, seed):
         return uniform_spherical_random_surface(n)
 
 
+def get_ztf_field_data():
+    url = 'https://raw.githubusercontent.com/ZwickyTransientFacility/ztf_information/master/field_grid/ZTF_Fields.txt'
+    data = Table.read(url, cache=True, format='ascii', comment='%')
+    data.rename_columns(['col1', 'col2', 'col3'], ['id', 'ra', 'dec'])
+    return data
+
+
 def get_random_galaxies(n, cursor):
     points = SkyCoord(get_random_points(n, RANDOM_GALAXIES_SEED))
     hpx = HPX.skycoord_to_healpix(points)
@@ -104,6 +112,26 @@ def get_random_fields(n, cursor):
         '\n'.join(
             f'{i}\t{hpx}'
             for i, moc in enumerate(mocs) for hpx in Tile.tiles_from(moc)
+        )
+    )
+    cursor.copy_from(f, FieldTile.__tablename__)
+
+    return mocs
+
+
+def get_ztf_fields(cursor):
+    field_data = get_ztf_field_data()
+    centers = SkyCoord(field_data['ra'] * u.deg, field_data['dec'] * u.deg)
+    footprints = get_footprints_grid(*get_ztf_footprint_corners(), centers)
+    mocs = [get_union_moc(footprint) for footprint in footprints]
+
+    f = io.StringIO('\n'.join(f'{i}' for i in field_data['id']))
+    cursor.copy_from(f, Field.__tablename__)
+
+    f = io.StringIO(
+        '\n'.join(
+            f'{i}\t{hpx}'
+            for i, moc in zip(field_data['id'], mocs) for hpx in Tile.tiles_from(moc)
         )
     )
     cursor.copy_from(f, FieldTile.__tablename__)
