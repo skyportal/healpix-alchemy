@@ -23,7 +23,7 @@ class Field(Base):
 
 
 class FieldTile(Base):
-    id = sa.Column(sa.ForeignKey(Field.id), primary_key=True, index=True)
+    id = sa.Column(sa.ForeignKey(Field.id), primary_key=True)
     hpx = sa.Column(Tile, primary_key=True, index=True)
 
 

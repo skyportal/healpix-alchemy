@@ -1,5 +1,5 @@
 from functools import reduce
-import time
+from .explain import explain
 
 import numpy as np
 import sqlalchemy as sa
@@ -108,7 +108,7 @@ def bench_and_check(bench):
 #     bench(query)
 
 
-def test_integrated_probability(bench, ztf_fields, random_sky_map):
+def test_integrated_probability(bench, ztf_fields, random_sky_map, session):
     """Find integrated probability within union of fields."""
     union = sa.select(
         func.union(FieldTile.hpx).label('hpx')
@@ -126,5 +126,8 @@ def test_integrated_probability(bench, ztf_fields, random_sky_map):
         union.columns.hpx.overlaps(SkymapTile.hpx)
     )
 
-    # Run benchmark
-    bench(query)
+    session.execute('ANALYZE')
+    session.execute("LOAD 'auto_explain'")
+    session.execute("SET auto_explain.log_min_duration=0")
+    session.execute(query).all()
+    session.execute("SET auto_explain.log_min_duration='1000s'")

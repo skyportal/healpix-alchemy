@@ -43,6 +43,7 @@ def ztf_fields(cursor, tables):
     return data.get_ztf_fields(cursor)
 
 
-@pytest.fixture
-def random_sky_map(cursor, tables):
-    return data.get_random_sky_map(20_000, cursor)
+@pytest.fixture(params=np.geomspace(1, 1000, 10, dtype=int).tolist())
+# @pytest.fixture(params=[50])
+def random_sky_map(cursor, tables, request):
+    return data.get_random_sky_map(20_000, request.param, cursor)

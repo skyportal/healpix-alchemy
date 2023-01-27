@@ -119,11 +119,17 @@ def get_random_fields(n, cursor):
     return mocs
 
 
-def get_ztf_fields(cursor):
+@functools.cache
+def get_ztf_mocs():
     field_data = get_ztf_field_data()
     centers = SkyCoord(field_data['ra'] * u.deg, field_data['dec'] * u.deg)
     footprints = get_footprints_grid(*get_ztf_footprint_corners(), centers)
     mocs = [get_union_moc(footprint) for footprint in footprints]
+    return field_data, mocs
+
+
+def get_ztf_fields(cursor):
+    field_data, mocs = get_ztf_mocs()
 
     f = io.StringIO('\n'.join(f'{i}' for i in field_data['id']))
     cursor.copy_from(f, Field.__tablename__)
@@ -139,9 +145,9 @@ def get_ztf_fields(cursor):
     return mocs
 
 
-def get_random_sky_map(n, cursor):
+def get_random_sky_map(n, nmaps, cursor):
     rng = np.random.default_rng(RANDOM_SKY_MAP_SEED)
-    for skymap_id in range(10, 0, -1):
+    for skymap_id in range(nmaps, 0, -1):
         # Make a randomly subdivided sky map
         npix = HPX.npix
         tiles = np.arange(0, npix + 1, 4 ** LEVEL).tolist()
@@ -170,4 +176,5 @@ def get_random_sky_map(n, cursor):
         )
         cursor.copy_from(f, SkymapTile.__tablename__)
 
-    return tiles, probdensity
+    # return tiles, probdensity
+    return nmaps
