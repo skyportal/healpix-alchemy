@@ -93,4 +93,4 @@ def _create_indices(index, parent):
         isinstance(index.expressions[0], sa.Column) and
         isinstance(index.expressions[0].type, Tile)
     ):
-        index.dialect_options['postgresql']['using'] = 'gist'
+        index.dialect_options['postgresql']['using'] = 'spgist'
