@@ -1,5 +1,5 @@
 [![PyPI Status](https://img.shields.io/pypi/v/healpix-alchemy)](https://pypi.org/project/healpix-alchemy/)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/skyportal/healpix-alchemy/build-and-test)](https://github.com/skyportal/healpix-alchemy/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/skyportal/healpix-alchemy/build-and-test.yml?branch=main)](https://github.com/skyportal/healpix-alchemy/actions)
 [![codecov](https://codecov.io/gh/skyportal/healpix-alchemy/branch/main/graph/badge.svg?token=T34O35OM0V)](https://codecov.io/gh/skyportal/healpix-alchemy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5768564.svg)](https://doi.org/10.5281/zenodo.5768564)
 
