@@ -1,5 +1,6 @@
 import numpy as np
 import sqlalchemy as sa
+from sqlalchemy import orm
 import pytest
 
 from . import data, models
@@ -13,7 +14,7 @@ def engine(postgresql):
 
 @pytest.fixture
 def session(engine):
-    with sa.orm.Session(engine) as session:
+    with orm.Session(engine) as session:
         yield session
 
 

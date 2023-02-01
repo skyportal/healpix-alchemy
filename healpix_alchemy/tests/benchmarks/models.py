@@ -1,14 +1,14 @@
 """SQLAlchemy ORM models for unit tests."""
 import sqlalchemy as sa
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy import orm
 
 from ...types import Point, Tile
 
 
-@as_declarative()
+@orm.as_declarative()
 class Base:
 
-    @declared_attr
+    @orm.declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()
 

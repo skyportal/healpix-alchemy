@@ -49,6 +49,7 @@ jobs:
     - name: Test with pytest
       env:
         BENCHMARK: ${{ matrix.benchmark }}
+        SQLALCHEMY_WARN_20: 1
       run: |
         PYTESTARGS="--cov --cov-report=xml"
         if [[ -z "${BENCHMARK}" ]]; then
