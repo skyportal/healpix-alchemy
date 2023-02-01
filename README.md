@@ -230,8 +230,8 @@ development environment, follow these instructions.
 First, some imports:
 
 ```pycon
+>>> from sqlalchemy import orm
 >>> import sqlalchemy as sa
->>> from sqlalchemy.ext.declarative import as_declarative, declared_attr
 >>> import healpix_alchemy as ha
 
 ```
@@ -247,10 +247,10 @@ create a base class that generates the table name automatically from the class
 name.
 
 ```pycon
->>> @as_declarative()
+>>> @orm.as_declarative()
 ... class Base:
 ...
-...     @declared_attr
+...     @orm.declared_attr
 ...     def __tablename__(cls):
 ...         return cls.__name__.lower()
 
@@ -270,7 +270,7 @@ Each row of the `Field` table represents a ZTF field:
 ```pycon
 >>> class Field(Base):
 ...     id = sa.Column(sa.Integer, primary_key=True)
-...     tiles = sa.orm.relationship(lambda: FieldTile)
+...     tiles = orm.relationship(lambda: FieldTile)
 
 ```
 
@@ -291,7 +291,7 @@ localization map.
 ```pycon
 >>> class Skymap(Base):
 ...     id = sa.Column(sa.Integer, primary_key=True)
-...     tiles = sa.orm.relationship(lambda: SkymapTile)
+...     tiles = orm.relationship(lambda: SkymapTile)
 
 ```
 
@@ -312,7 +312,7 @@ Finally, connect to the database, create all the tables, and start a session.
 ```pycon
 >>> engine = sa.create_engine('postgresql://user:password@host/database')
 >>> Base.metadata.create_all(engine)
->>> session = sa.orm.Session(engine)
+>>> session = orm.Session(engine)
 
 ```
 
@@ -375,7 +375,7 @@ Last, run [`ANALYZE`](https://www.postgresql.org/docs/current/sql-analyze.html)
 to prepare the data for use:
 
 ```pycon
->>> session.execute('ANALYZE')
+>>> session.execute(sa.text('ANALYZE'))
 <sqlalchemy.engine.cursor.CursorResult object at 0x...>
 
 ```

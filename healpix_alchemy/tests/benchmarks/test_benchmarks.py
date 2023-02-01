@@ -12,7 +12,7 @@ from .models import Galaxy, FieldTile, SkymapTile
 def bench(benchmark, session):
 
     def _func(query):
-        session.execute('ANALYZE')
+        session.execute(sa.text('ANALYZE'))
         return benchmark(lambda: session.execute(query).all())
 
     return _func
