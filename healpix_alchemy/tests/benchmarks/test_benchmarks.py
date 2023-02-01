@@ -129,5 +129,6 @@ def test_integrated_probability(bench, ztf_fields, random_sky_map, session):
     session.execute('ANALYZE')
     session.execute("LOAD 'auto_explain'")
     session.execute("SET auto_explain.log_min_duration=0")
+    session.execute("SET auto_explain.log_analyze=true")
     session.execute(query).all()
     session.execute("SET auto_explain.log_min_duration='1000s'")
