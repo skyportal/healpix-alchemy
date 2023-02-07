@@ -28,6 +28,7 @@ pytest = "*"
 pytest-benchmark = "*"
 pytest-doctestplus = "*"
 pytest-postgresql = "<4.0.0"  # pytest-postgresql 4.0.0 uses psycopg3, but sqlalchemy does not yet support it
+regions = ">=0.6"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-glob *.md"

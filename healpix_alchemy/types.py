@@ -94,3 +94,26 @@ def _create_indices(index, parent):
         isinstance(index.expressions[0].type, Tile)
     ):
         index.dialect_options['postgresql']['using'] = 'spgist'
+
+
+@sa.event.listens_for(sa.Table, 'after_create')
+def _after_create_table(target, connection, **kwargs):
+    """Declare our own version of unnest() with a hardcoded planner row count
+    estimate that is more appropriate for sky maps.
+
+    FIXME: Remove this when PostgreSQL gets better planner support for
+    multiranges.
+
+    See https://github.com/skyportal/healpix-alchemy/pull/55.
+    """
+    connection.execute(sa.text(
+        'CREATE OR REPLACE FUNCTION multirange_unnest(arg anymultirange)'
+        ' RETURNS SETOF anyrange'
+        ' AS $$ select unnest($1); $$'
+        ' LANGUAGE SQL'
+        ' IMMUTABLE'
+        ' PARALLEL SAFE'
+        ' STRICT'
+        ' COST 1'
+        ' ROWS 2000'
+    ))

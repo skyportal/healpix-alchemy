@@ -5,4 +5,4 @@ from .types import Tile as _Tile
 
 
 def union(tiles):
-    return _func.unnest(_func.range_agg(tiles), type_=_Tile)
+    return _func.multirange_unnest(_func.range_agg(tiles), type_=_Tile)
