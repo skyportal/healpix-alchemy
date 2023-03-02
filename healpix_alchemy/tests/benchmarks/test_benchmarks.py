@@ -67,7 +67,7 @@ def test_crossmatch_galaxies_and_fields(bench_and_check,
     points = random_galaxies
     fields = random_fields
     result = np.sum(
-        [moc.contains(points.ra, points.dec) for moc in fields],
+        [moc.contains_skycoords(points) for moc in fields],
         axis=1)
     expected = np.flipud(np.sort(result))[:5].reshape(-1, 1)
 
