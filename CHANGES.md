@@ -1,5 +1,9 @@
 # Changes
 
+## 1.0.2 (unreleased)
+
+- Track API changes in mocpy.
+
 ## 1.0.1 (2021-12-08)
 
 - Add benchmarks to unit test suite.

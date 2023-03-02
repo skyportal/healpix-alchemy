@@ -1,10 +1,10 @@
 from astropy.coordinates import ICRS
 from astropy import units as u
 from astropy_healpix import level_to_nside, HEALPix
-from mocpy import IntervalSet
+from mocpy import MOC
 import sqlalchemy as sa
 
-LEVEL = IntervalSet.HPX_MAX_ORDER
+LEVEL = MOC.MAX_ORDER
 """Base HEALPix resolution. This is the maximum HEALPix level that can be
 stored in a signed 8-byte integer data type."""
 
