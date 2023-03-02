@@ -78,7 +78,7 @@ class Tile(sa.TypeDecorator):
 
     @classmethod
     def tiles_from_moc(cls, moc):
-        return (f'[{lo},{hi})' for lo, hi in moc._interval_set.nested)
+        return (f'[{lo},{hi})' for lo, hi in moc.to_depth29_ranges)
 
 
 @sa.event.listens_for(sa.Index, 'after_parent_attach')
