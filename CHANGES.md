@@ -1,8 +1,10 @@
 # Changes
 
-## 1.0.2 (unreleased)
+## 1.0.2 (2023-03-03)
 
 - Track API changes in mocpy.
+
+- Fix compatibility with SQLAlchemy 2.x.
 
 ## 1.0.1 (2021-12-08)
 
