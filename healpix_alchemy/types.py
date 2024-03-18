@@ -80,6 +80,13 @@ class Tile(sa.TypeDecorator):
     def tiles_from_moc(cls, moc):
         return (f'[{lo},{hi})' for lo, hi in moc.to_depth29_ranges)
 
+    @classmethod
+    def moc_from_tiles(cls, rangeSet, nside):
+        depth = int(np.log2(nside))
+        MOCstr = f'{depth}/' + ' '.join(map(lambda x: f'{x[0]}-{x[1]-1}',
+                                            rangeSet))
+        return MOC.from_string(MOCstr)
+
 
 @sa.event.listens_for(sa.Index, 'after_parent_attach')
 def _create_indices(index, parent):

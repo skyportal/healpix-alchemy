@@ -35,3 +35,7 @@ class SkymapTile(Base):
     id = sa.Column(sa.ForeignKey(Skymap.id), primary_key=True)
     hpx = sa.Column(Tile, primary_key=True, index=True)
     probdensity = sa.Column(sa.Float, nullable=False)
+
+
+class TileList(Base):
+    hpx = sa.Column(Tile, primary_key=True, index=True)

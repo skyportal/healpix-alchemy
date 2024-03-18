@@ -41,3 +41,8 @@ def random_fields(cursor, tables, request):
 @pytest.fixture
 def random_sky_map(cursor, tables):
     return data.get_random_sky_map(20_000, cursor)
+
+
+@pytest.fixture
+def random_moc_from_cone(cursor, tables):
+    return data.get_random_moc_from_cone(15, cursor)
