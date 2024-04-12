@@ -7,7 +7,9 @@ import pytest
 @pytest.fixture
 def engine(postgresql):
     """Create an SQLAlchemy engine with a disposable PostgreSQL database."""
-    return sa.create_engine('postgresql://', poolclass=sa.pool.StaticPool,
+    return sa.create_engine('postgresql+psycopg://',
+                            poolclass=sa.pool.StaticPool,
+                            pool_reset_on_return=None,
                             creator=lambda: postgresql)
 
 
