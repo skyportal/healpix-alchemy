@@ -70,7 +70,7 @@ jobs:
     #     name: runtime-plots
     #     path: plots
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: true
     - name: Upload benchmark results to github artifacts
