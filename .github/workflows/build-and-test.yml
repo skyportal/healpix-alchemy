@@ -28,7 +28,7 @@ jobs:
         include:
           # only run benchmarks for the following configuration...
           - os: ubuntu-latest
-            python-version: 3.9
+            python-version: 3.12
             benchmark: true
 
     steps:
