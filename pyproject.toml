@@ -11,6 +11,9 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Scientific/Engineering :: Astronomy"
 ]
+include = [
+    { path = "tests", format = "sdist" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"

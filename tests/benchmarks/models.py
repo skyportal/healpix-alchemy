@@ -2,7 +2,7 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from ...types import Point, Tile
+from healpix_alchemy.types import Point, Tile
 
 
 @orm.as_declarative()

@@ -11,8 +11,9 @@ from mocpy import MOC
 import numpy as np
 import pytest
 
-from ...constants import HPX, LEVEL, PIXEL_AREA
-from ...types import Tile
+from healpix_alchemy.constants import HPX, LEVEL, PIXEL_AREA
+from healpix_alchemy.types import Tile
+
 from .models import Galaxy, Field, FieldTile, Skymap, SkymapTile
 
 (
