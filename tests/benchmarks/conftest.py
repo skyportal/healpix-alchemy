@@ -1,17 +1,8 @@
 import numpy as np
-import sqlalchemy as sa
 from sqlalchemy import orm
 import pytest
 
 from . import data, models
-
-
-@pytest.fixture
-def engine(postgresql):
-    return sa.create_engine('postgresql+psycopg://',
-                            poolclass=sa.pool.StaticPool,
-                            pool_reset_on_return=None,
-                            creator=lambda: postgresql)
 
 
 @pytest.fixture

@@ -4,7 +4,8 @@ import numpy as np
 import sqlalchemy as sa
 import pytest
 
-from ... import func
+from healpix_alchemy import func
+
 from .models import Galaxy, FieldTile, SkymapTile
 
 
