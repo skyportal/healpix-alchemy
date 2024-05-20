@@ -16,7 +16,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Run flake8
-        uses: TrueBrain/actions-flake8@v2.2
+        uses: TrueBrain/actions-flake8@v2.3
 
   build:
 
