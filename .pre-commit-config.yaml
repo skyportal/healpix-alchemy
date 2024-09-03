@@ -1,0 +1,45 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        # Prevent giant files from being committed.
+      - id: check-case-conflict
+        # Check for files with names that would conflict on a case-insensitive
+        # filesystem like MacOS HFS+ or Windows FAT.
+      - id: check-json
+        # Attempts to load all json files to verify syntax.
+      - id: check-merge-conflict
+        # Check for files that contain merge conflict strings.
+      - id: check-symlinks
+        # Checks for symlinks which do not point to anything.
+      - id: check-toml
+        # Attempts to load all TOML files to verify syntax.
+      - id: check-xml
+        # Attempts to load all xml files to verify syntax.
+      - id: check-yaml
+        # Attempts to load all yaml files to verify syntax.
+      - id: detect-private-key
+        # Checks for the existence of private keys.
+      - id: end-of-file-fixer
+        # Makes sure files end in a newline and only a newline.
+      - id: trailing-whitespace
+        # Trims trailing whitespace.
+        exclude_types: [python] # Covered by Ruff W291.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.6.3
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: ["--extend-select", "I", "--fix"]
+      # Run the formatter.
+      - id: ruff-format
+  - repo: https://github.com/python-poetry/poetry
+    rev: "1.8.3"
+    hooks:
+      - id: poetry-check
+      - id: poetry-lock
+        args: ["--no-update"]
