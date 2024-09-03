@@ -29,6 +29,7 @@ pandas = "*"
 psycopg = { version = "*", extras = ["binary"] }
 pytest = "*"
 pytest-benchmark = "*"
+pytest-cov = "^5.0.0"
 pytest-doctestplus = "*"
 pytest-postgresql = ">=4.0.0"
 

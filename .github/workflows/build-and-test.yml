@@ -42,7 +42,6 @@ jobs:
     - name: Install Poetry environment
       run: |
         poetry install
-        poetry run pip install pytest-cov
     - name: Test with pytest
       env:
         BENCHMARK: ${{ matrix.benchmark }}
