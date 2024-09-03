@@ -1,6 +1,6 @@
 import numpy as np
-from sqlalchemy import orm
 import pytest
+from sqlalchemy import orm
 
 from . import data, models
 

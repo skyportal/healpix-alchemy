@@ -1,4 +1,5 @@
 """SQLAlchemy ORM models for unit tests."""
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 
@@ -7,7 +8,6 @@ from healpix_alchemy.types import Point, Tile
 
 @orm.as_declarative()
 class Base:
-
     @orm.declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()
