@@ -1,5 +1,12 @@
 # Changes
 
+## Unreleased
+
+- Support NumPy 2. Drop support for Python 3.10, which is incompatible with
+  NumPy 2.4 because the only compatible Astropy release for Python 3.10
+  (6.1.x) still references the removed `numpy.in1d`. Run unit tests for
+  Python 3.11 through 3.14.
+
 ## 1.1.0 (2024-04-16)
 
 - Don't include the unit tests in the installed Python package.
