@@ -1,5 +1,11 @@
 # Changes
 
+## 1.1.1 (unreleased)
+
+- Support NumPy 2. Drop support for Python 3.10, which is no longer expected to
+  be supported by scientific Python packages as per SPEC-0. Run unit tests for
+  Python 3.11 through 3.14.
+
 ## 1.1.0 (2024-04-16)
 
 - Don't include the unit tests in the installed Python package.
