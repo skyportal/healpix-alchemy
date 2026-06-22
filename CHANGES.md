@@ -6,10 +6,6 @@
   be supported by scientific Python packages as per SPEC-0. Run unit tests for
   Python 3.11 through 3.14.
 
-- Coerce ``LEVEL`` to a Python ``int``. Newer versions of mocpy return
-  ``MOC.MAX_ORDER`` as a ``numpy.uint8``, which silently overflowed in
-  expressions such as ``4**LEVEL``.
-
 ## 1.1.0 (2024-04-16)
 
 - Don't include the unit tests in the installed Python package.
