@@ -4,7 +4,9 @@ from astropy.coordinates import ICRS
 from astropy_healpix import HEALPix, level_to_nside
 from mocpy import MOC
 
-LEVEL = MOC.MAX_ORDER
+# Coerce to a Python int because newer versions of mocpy return a numpy.uint8,
+# which would silently overflow in expressions like 4**LEVEL.
+LEVEL = int(MOC.MAX_ORDER)
 """Base HEALPix resolution. This is the maximum HEALPix level that can be
 stored in a signed 8-byte integer data type."""
 
