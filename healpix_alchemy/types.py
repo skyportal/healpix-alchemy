@@ -6,7 +6,6 @@ from numbers import Integral
 import numpy as np
 import sqlalchemy as sa
 from astropy.coordinates import SkyCoord
-from astropy_healpix import uniq_to_level_ipix
 from mocpy import MOC
 from sqlalchemy.dialects.postgresql import INT8RANGE
 
@@ -35,7 +34,11 @@ class Tile(sa.TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         if isinstance(value, Integral):
-            level, ipix = uniq_to_level_ipix(value)
+            # Decode the UNIQ index to a pixel range at LEVEL using pure
+            # integer math.
+            value = int(value)
+            level = (value.bit_length() - 1) // 2 - 1
+            ipix = value - (1 << (2 * (level + 1)))
             shift = 2 * (LEVEL - level)
             value = (ipix << shift, (ipix + 1) << shift)
         if isinstance(value, Sequence) and len(value) == 2:
@@ -77,6 +80,28 @@ class Tile(sa.TypeDecorator):
     @classmethod
     def tiles_from_moc(cls, moc):
         return (f"[{lo},{hi})" for lo, hi in moc.to_depth29_ranges)
+
+    @classmethod
+    def tiles_from_uniq(cls, uniq):
+        """Convert an array of UNIQ indices to tile range strings.
+
+        This is the vectorized, bulk equivalent of binding individual UNIQ
+        integers one at a time. It avoids per-row Python overhead and yields
+        ``[lo,hi)`` strings that can be written directly to PostgreSQL ``COPY``,
+        which is the fast way to ingest a large multi-order sky map.
+        """
+        uniq = np.asarray(uniq, dtype=np.int64)
+        level = np.searchsorted(_UNIQ_LOWER_BOUNDS, uniq, side="right") - 1
+        ipix = uniq - (np.int64(1) << (2 * (level + 1)))
+        shift = 2 * (LEVEL - level)
+        lo = ipix << shift
+        hi = (ipix + 1) << shift
+        return (f"[{a},{b})" for a, b in zip(lo.tolist(), hi.tolist()))
+
+
+# Lower bound of the UNIQ index at each level: a tile at (level, ipix) has
+# UNIQ = ipix + 4 ** (level + 1), so UNIQ >= 4 ** (level + 1).
+_UNIQ_LOWER_BOUNDS = 4 ** np.arange(1, LEVEL + 2, dtype=np.int64)
 
 
 @sa.event.listens_for(sa.Index, "after_parent_attach")
