@@ -1,37 +1,42 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools>=77", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "healpix-alchemy"
-version = "1.1.0"
 description = "SQLAlchemy extensions for HEALPix spatially indexed astronomy data"
 readme = "README.md"
-authors = ["Leo Singer <leo.singer@ligo.org>"]
+authors = [ { name = "Leo Singer", email = "leo.p.singer@nasa.gov" } ]
 license = "BSD-3-clause"
-repository = "https://github.com/skyportal/healpix-alchemy"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Topic :: Database",
-    "Topic :: Scientific/Engineering :: Astronomy"
+    "Topic :: Scientific/Engineering :: Astronomy",
 ]
-include = [
-    { path = "tests", format = "sdist" },
+dependencies = [
+    "astropy",
+    "astropy_healpix",
+    "mocpy>=0.12.2",
+    "sqlalchemy>=1.4",
 ]
+requires-python = ">=3.11"
+dynamic = ["version"]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-astropy = "*"
-astropy_healpix = "*"
-mocpy = ">=0.12.2"
-sqlalchemy = ">=1.4"
+[project.urls]
+source = "https://github.com/skyportal/healpix-alchemy"
 
-[tool.poetry.group.dev.dependencies]
-astroquery = "*"
-numpy = "*"
-pandas = "*"
-psycopg = { version = "*", extras = ["binary"] }
-pytest = "*"
-pytest-benchmark = "*"
-pytest-cov = "^5.0.0"
-pytest-doctestplus = "*"
-pytest-postgresql = ">=4.0.0"
+[dependency-groups]
+test = [
+    "astroquery",
+    "numpy",
+    "pandas",
+    "psycopg[binary]",
+    "pytest",
+    "pytest-benchmark",
+    "pytest-cov~=5.0.0",
+    "pytest-doctestplus",
+    "pytest-postgresql>=4.0.0",
+]
 
 [tool.pytest.ini_options]
 addopts = "--doctest-glob *.md"
@@ -52,6 +57,4 @@ omit = [
     "*/tests/*"
 ]
 
-[build-system]
-requires = ["poetry-core>=1.2.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools_scm]
