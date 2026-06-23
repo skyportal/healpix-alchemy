@@ -33,7 +33,7 @@ test = [
     "psycopg[binary]",
     "pytest",
     "pytest-benchmark",
-    "pytest-cov~=5.0.0",
+    "pytest-cov",
     "pytest-doctestplus",
     "pytest-postgresql>=4.0.0",
 ]
