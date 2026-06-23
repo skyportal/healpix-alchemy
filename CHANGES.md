@@ -1,6 +1,6 @@
 # Changes
 
-## 1.1.1 (unreleased)
+## 1.1.1 (2026-06-23)
 
 - Support NumPy 2. Drop support for Python 3.10, which is no longer expected to
   be supported by scientific Python packages as per SPEC-0. Run unit tests for
