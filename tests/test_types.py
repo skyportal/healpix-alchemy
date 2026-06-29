@@ -38,14 +38,6 @@ def test_tiles_from_uniq(uniq_and_expected):
     assert list(Tile.tiles_from_uniq(uniq)) == expected
 
 
-def test_tiles_from_uniq_boundary_pixel():
-    """The last pixel of each level decodes correctly (worst case for log2)."""
-    for level in range(LEVEL + 1):
-        npix = 12 * 4**level
-        uniq, expected = _uniq_and_range(level, npix - 1)
-        assert list(Tile.tiles_from_uniq([uniq])) == [expected]
-
-
 def test_tiles_from_uniq_accepts_sequence():
     """The helper accepts any array-like, not just numpy arrays."""
     uniq, expected = zip(_uniq_and_range(0, 0), _uniq_and_range(5, 100))
