@@ -81,11 +81,6 @@ class Tile(sa.TypeDecorator):
     @classmethod
     def tiles_from_uniq(cls, uniq):
         """Convert an array of UNIQ indices to tile range strings.
-
-        This is the vectorized, bulk equivalent of binding individual UNIQ
-        integers one at a time. It avoids per-row Python overhead and yields
-        ``[lo,hi)`` strings that can be written directly to PostgreSQL ``COPY``,
-        which is the fast way to ingest a large multi-order sky map.
         """
         level, ipix = uniq_to_level_ipix(np.asarray(uniq, dtype=np.int64))
         shift = 2 * (LEVEL - level)
