@@ -1,5 +1,13 @@
 # Changes
 
+## 1.2.0 (unreleased)
+
+- Add ``Tile.tiles_from_uniq``, a vectorized helper that converts an array of
+  UNIQ indices to tile range strings for fast bulk ingestion of multi-order sky
+  maps via PostgreSQL ``COPY``.
+
+- Require astropy-healpix >= 2.
+
 ## 1.1.1 (2026-06-23)
 
 - Support NumPy 2. Drop support for Python 3.10, which is no longer expected to

@@ -78,6 +78,15 @@ class Tile(sa.TypeDecorator):
     def tiles_from_moc(cls, moc):
         return (f"[{lo},{hi})" for lo, hi in moc.to_depth29_ranges)
 
+    @classmethod
+    def tiles_from_uniq(cls, uniq):
+        """Convert an array of UNIQ indices to tile range strings."""
+        level, ipix = uniq_to_level_ipix(np.asarray(uniq, dtype=np.int64))
+        shift = 2 * (LEVEL - level)
+        lo = ipix << shift
+        hi = (ipix + 1) << shift
+        return (f"[{a},{b})" for a, b in zip(lo.tolist(), hi.tolist()))
+
 
 @sa.event.listens_for(sa.Index, "after_parent_attach")
 def _create_indices(index, parent):

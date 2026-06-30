@@ -15,7 +15,7 @@ classifiers = [
 ]
 dependencies = [
     "astropy",
-    "astropy_healpix",
+    "astropy_healpix>=2",
     "mocpy>=0.12.2",
     "sqlalchemy>=1.4",
 ]
