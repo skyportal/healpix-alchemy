@@ -80,8 +80,7 @@ class Tile(sa.TypeDecorator):
 
     @classmethod
     def tiles_from_uniq(cls, uniq):
-        """Convert an array of UNIQ indices to tile range strings.
-        """
+        """Convert an array of UNIQ indices to tile range strings."""
         level, ipix = uniq_to_level_ipix(np.asarray(uniq, dtype=np.int64))
         shift = 2 * (LEVEL - level)
         lo = ipix << shift
