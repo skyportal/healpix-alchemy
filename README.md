@@ -210,7 +210,6 @@ name.
 ```pycon
 >>> @orm.as_declarative()
 ... class Base:
-...
 ...     @orm.declared_attr
 ...     def __tablename__(cls):
 ...         return cls.__name__.lower()
@@ -271,7 +270,7 @@ between `Skymap` and `SkymapTile`.
 Finally, connect to the database, create all the tables, and start a session.
 
 ```pycon
->>> engine = sa.create_engine('postgresql://user:password@host/database')
+>>> engine = sa.create_engine("postgresql://user:password@host/database")
 >>> Base.metadata.create_all(engine)
 >>> session = orm.Session(engine)
 
@@ -289,11 +288,11 @@ and using [SQLAlchemy bulk insertion].
 ```pycon
 >>> from astropy.coordinates import SkyCoord
 >>> from astroquery.vizier import Vizier
->>> vizier = Vizier(columns=['SimbadName', 'RAJ2000', 'DEJ2000'], row_limit=-1)
->>> data, = vizier.get_catalogs('J/ApJS/199/26/table3')
->>> data['coord'] = SkyCoord(data['RAJ2000'], data['DEJ2000'])
+>>> vizier = Vizier(columns=["SimbadName", "RAJ2000", "DEJ2000"], row_limit=-1)
+>>> (data,) = vizier.get_catalogs("J/ApJS/199/26/table3")
+>>> data["coord"] = SkyCoord(data["RAJ2000"], data["DEJ2000"])
 >>> for row in data:
-...     session.add(Galaxy(id=row['SimbadName'], hpx=row['coord']))
+...     session.add(Galaxy(id=row["SimbadName"], hpx=row["coord"]))
 >>> session.commit()
 
 ```
@@ -308,12 +307,12 @@ significantly by using [SQLAlchemy bulk insertion].
 >>> from astropy.table import Table
 >>> from astropy.coordinates import SkyCoord
 >>> from astropy import units as u
->>> url = 'https://raw.githubusercontent.com/ZwickyTransientFacility/ztf_information/9fd0ba8842709f42a134c88827309ccab728fcb7/field_grid/ztf_field_corners.csv'
+>>> url = "https://raw.githubusercontent.com/ZwickyTransientFacility/ztf_information/9fd0ba8842709f42a134c88827309ccab728fcb7/field_grid/ztf_field_corners.csv"
 >>> for row in Table.read(url):
-...     field_id = int(row['field'])
-...     corners = SkyCoord(row['ra1', 'ra2', 'ra3', 'ra4'],
-...                        row['dec1', 'dec2', 'dec3', 'dec4'],
-...                        unit=u.deg)
+...     field_id = int(row["field"])
+...     corners = SkyCoord(
+...         row["ra1", "ra2", "ra3", "ra4"], row["dec1", "dec2", "dec3", "dec4"], unit=u.deg
+...     )
 ...     tiles = [FieldTile(hpx=hpx) for hpx in ha.Tile.tiles_from(corners)]
 ...     session.add(Field(id=field_id, tiles=tiles))
 >>> session.commit()
@@ -324,9 +323,9 @@ Load a sky map for LIGO/Virgo event [GW200115_042309] ([S200115j]) into the
 `Skymap` and `SkymapTile` tables.
 
 ```pycon
->>> url = 'https://gracedb.ligo.org/apiweb/superevents/S200115j/files/bayestar.multiorder.fits'
+>>> url = "https://gracedb.ligo.org/apiweb/superevents/S200115j/files/bayestar.multiorder.fits"
 >>> data = Table.read(url)
->>> tiles = [SkymapTile(hpx=row['UNIQ'], probdensity=row['PROBDENSITY']) for row in data]
+>>> tiles = [SkymapTile(hpx=row["UNIQ"], probdensity=row["PROBDENSITY"]) for row in data]
 >>> session.add(Skymap(id=1, tiles=tiles))
 >>> session.commit()
 
@@ -336,7 +335,7 @@ Last, run [`ANALYZE`](https://www.postgresql.org/docs/current/sql-analyze.html)
 to prepare the data for use:
 
 ```pycon
->>> session.execute(sa.text('ANALYZE'))
+>>> session.execute(sa.text("ANALYZE"))
 <sqlalchemy.engine.cursor.CursorResult object at 0x...>
 
 ```
@@ -346,15 +345,13 @@ to prepare the data for use:
 #### What is the area of each field?
 
 ```pycon
->>> query = sa.select(
-...     FieldTile.id, sa.func.sum(FieldTile.hpx.area)
-... ).group_by(
-...     FieldTile.id
-... ).limit(
-...     5
+>>> query = (
+...     sa.select(FieldTile.id, sa.func.sum(FieldTile.hpx.area))
+...     .group_by(FieldTile.id)
+...     .limit(5)
 ... )
 >>> for id, area in session.execute(query):
-...     print(f'Field {id} has area {area:.3g} sr')
+...     print(f"Field {id} has area {area:.3g} sr")
 Field 199 has area 0.0174 sr
 Field 200 has area 0.0174 sr
 Field 201 has area 0.0174 sr
@@ -367,19 +364,15 @@ Field 203 has area 0.0174 sr
 
 ```pycon
 >>> count = sa.func.count(Galaxy.id)
->>> query = sa.select(
-...     FieldTile.id, count
-... ).filter(
-...     FieldTile.hpx.contains(Galaxy.hpx)
-... ).group_by(
-...     FieldTile.id
-... ).order_by(
-...     count.desc()
-... ).limit(
-...     5
+>>> query = (
+...     sa.select(FieldTile.id, count)
+...     .filter(FieldTile.hpx.contains(Galaxy.hpx))
+...     .group_by(FieldTile.id)
+...     .order_by(count.desc())
+...     .limit(5)
 ... )
 >>> for id, n in session.execute(query):
-...     print(f'Field {id} contains {n} galaxies')
+...     print(f"Field {id} contains {n} galaxies")
 Field 1739 contains 343 galaxies
 Field 699 contains 336 galaxies
 Field 700 contains 311 galaxies
@@ -391,18 +384,14 @@ Field 1740 contains 289 galaxies
 #### What is the probability density at the position of each galaxy?
 
 ```pycon
->>> query = sa.select(
-...     Galaxy.id, SkymapTile.probdensity
-... ).filter(
-...     SkymapTile.id == 1,
-...     SkymapTile.hpx.contains(Galaxy.hpx)
-... ).order_by(
-...     SkymapTile.probdensity.desc()
-... ).limit(
-...     5
+>>> query = (
+...     sa.select(Galaxy.id, SkymapTile.probdensity)
+...     .filter(SkymapTile.id == 1, SkymapTile.hpx.contains(Galaxy.hpx))
+...     .order_by(SkymapTile.probdensity.desc())
+...     .limit(5)
 ... )
 >>> for id, p in session.execute(query):
-...     print(f'{id} has prob. density {p:.5g}/sr')
+...     print(f"{id} has prob. density {p:.5g}/sr")
 2MASX J02532153+0632222 has prob. density 20.701/sr
 2MASX J02530482+0555431 has prob. density 20.695/sr
 2MASX J02533119+0628252 has prob. density 20.669/sr
@@ -416,20 +405,15 @@ Field 1740 contains 289 galaxies
 ```pycon
 >>> area = (FieldTile.hpx * SkymapTile.hpx).area
 >>> prob = sa.func.sum(SkymapTile.probdensity * area)
->>> query = sa.select(
-...     FieldTile.id, prob
-... ).filter(
-...     SkymapTile.id == 1,
-...     FieldTile.hpx.overlaps(SkymapTile.hpx)
-... ).group_by(
-...     FieldTile.id
-... ).order_by(
-...     prob.desc()
-... ).limit(
-...     5
+>>> query = (
+...     sa.select(FieldTile.id, prob)
+...     .filter(SkymapTile.id == 1, FieldTile.hpx.overlaps(SkymapTile.hpx))
+...     .group_by(FieldTile.id)
+...     .order_by(prob.desc())
+...     .limit(5)
 ... )
 >>> for id, prob in session.execute(query):
-...     print(f'Field {id} probability is {prob:.3g}')
+...     print(f"Field {id} probability is {prob:.3g}")
 Field 1499 probability is 0.165
 Field 1446 probability is 0.156
 Field 452 probability is 0.154
@@ -445,16 +429,14 @@ finds the union of a set of tiles. Because it is an aggregate function, it
 should generally be used in a subquery.
 
 ```pycon
->>> union = sa.select(
-...     ha.func.union(FieldTile.hpx).label('hpx')
-... ).filter(
-...     FieldTile.id.between(1000, 2000)
-... ).subquery()
->>> query = sa.select(
-...     sa.func.sum(union.columns.hpx.area)
+>>> union = (
+...     sa.select(ha.func.union(FieldTile.hpx).label("hpx"))
+...     .filter(FieldTile.id.between(1000, 2000))
+...     .subquery()
 ... )
+>>> query = sa.select(sa.func.sum(union.columns.hpx.area))
 >>> result = session.execute(query).scalar_one()
->>> print(f'{result:.3g} sr')
+>>> print(f"{result:.3g} sr")
 9.33 sr
 
 ```
@@ -462,20 +444,17 @@ should generally be used in a subquery.
 #### What is the integrated probability contained within fields 1000 through 2000?
 
 ```pycon
->>> union = sa.select(
-...     ha.func.union(FieldTile.hpx).label('hpx')
-... ).filter(
-...     FieldTile.id.between(1000, 2000)
-... ).subquery()
+>>> union = (
+...     sa.select(ha.func.union(FieldTile.hpx).label("hpx"))
+...     .filter(FieldTile.id.between(1000, 2000))
+...     .subquery()
+... )
 >>> prob = sa.func.sum(SkymapTile.probdensity * (union.columns.hpx * SkymapTile.hpx).area)
->>> query = sa.select(
-...     prob
-... ).filter(
-...     SkymapTile.id == 1,
-...     union.columns.hpx.overlaps(SkymapTile.hpx)
+>>> query = sa.select(prob).filter(
+...     SkymapTile.id == 1, union.columns.hpx.overlaps(SkymapTile.hpx)
 ... )
 >>> result = session.execute(query).scalar_one()
->>> print(f'{result:.3g}')
+>>> print(f"{result:.3g}")
 0.837
 
 ```
@@ -483,33 +462,22 @@ should generally be used in a subquery.
 #### What is the area of the 90% credible region?
 
 ```pycon
->>> cum_area = sa.func.sum(
-...     SkymapTile.hpx.area
-... ).over(
-...     order_by=SkymapTile.probdensity.desc()
-... ).label(
-...     'cum_area'
+>>> cum_area = (
+...     sa.func.sum(SkymapTile.hpx.area)
+...     .over(order_by=SkymapTile.probdensity.desc())
+...     .label("cum_area")
 ... )
->>> cum_prob = sa.func.sum(
-...     SkymapTile.probdensity * SkymapTile.hpx.area
-... ).over(
-...     order_by=SkymapTile.probdensity.desc()
-... ).label(
-...     'cum_prob'
+>>> cum_prob = (
+...     sa.func.sum(SkymapTile.probdensity * SkymapTile.hpx.area)
+...     .over(order_by=SkymapTile.probdensity.desc())
+...     .label("cum_prob")
 ... )
->>> subquery = sa.select(
-...     cum_area,
-...     cum_prob
-... ).filter(
-...     SkymapTile.id == 1
-... ).subquery()
->>> query = sa.select(
-...     sa.func.max(subquery.columns.cum_area)
-... ).filter(
+>>> subquery = sa.select(cum_area, cum_prob).filter(SkymapTile.id == 1).subquery()
+>>> query = sa.select(sa.func.max(subquery.columns.cum_area)).filter(
 ...     subquery.columns.cum_prob <= 0.9
 ... )
 >>> result = session.execute(query).scalar_one()
->>> print(f'{result:.3g} sr')
+>>> print(f"{result:.3g} sr")
 0.277 sr
 
 ```
@@ -517,34 +485,29 @@ should generally be used in a subquery.
 #### Which galaxies are within the 90% credible region?
 
 ```pycon
->>> cum_prob = sa.func.sum(
-...     SkymapTile.probdensity * SkymapTile.hpx.area
-... ).over(
-...     order_by=SkymapTile.probdensity.desc()
-... ).label(
-...     'cum_prob'
+>>> cum_prob = (
+...     sa.func.sum(SkymapTile.probdensity * SkymapTile.hpx.area)
+...     .over(order_by=SkymapTile.probdensity.desc())
+...     .label("cum_prob")
 ... )
->>> subquery = sa.select(
-...     SkymapTile.probdensity,
-...     cum_prob
-... ).filter(
-...     SkymapTile.id == 1
-... ).subquery()
->>> min_probdensity = sa.select(
-...     sa.func.min(subquery.columns.probdensity)
-... ).filter(
-...     subquery.columns.cum_prob <= 0.9
-... ).scalar_subquery()
->>> query = sa.select(
-...     Galaxy.id
-... ).filter(
-...     SkymapTile.id == 1,
-...     SkymapTile.hpx.contains(Galaxy.hpx),
-...     SkymapTile.probdensity >= min_probdensity
-... ).limit(
-...     5
+>>> subquery = (
+...     sa.select(SkymapTile.probdensity, cum_prob).filter(SkymapTile.id == 1).subquery()
 ... )
->>> for galaxy_id, in session.execute(query):
+>>> min_probdensity = (
+...     sa.select(sa.func.min(subquery.columns.probdensity))
+...     .filter(subquery.columns.cum_prob <= 0.9)
+...     .scalar_subquery()
+... )
+>>> query = (
+...     sa.select(Galaxy.id)
+...     .filter(
+...         SkymapTile.id == 1,
+...         SkymapTile.hpx.contains(Galaxy.hpx),
+...         SkymapTile.probdensity >= min_probdensity,
+...     )
+...     .limit(5)
+... )
+>>> for (galaxy_id,) in session.execute(query):
 ...     print(galaxy_id)
 2MASX J02424077-0000478
 2MASX J02352772-0921216
