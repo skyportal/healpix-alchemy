@@ -17,7 +17,7 @@ dependencies = [
     "astropy",
     "astropy_healpix>=2",
     "mocpy>=0.12.2",
-    "sqlalchemy>=1.4",
+    "sqlalchemy>=2",
 ]
 requires-python = ">=3.11"
 dynamic = ["version"]
@@ -56,5 +56,8 @@ omit = [
     "*/conftest.py",
     "*/tests/*"
 ]
+
+[tool.setuptools.package-data]
+healpix_alchemy = ["py.typed"]
 
 [tool.setuptools_scm]
