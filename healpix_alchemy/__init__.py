@@ -1,4 +1,4 @@
-from . import func  # noqa: F401
+from . import func
 from .types import Point, Tile
 
-__all__ = ("Point", "Tile")
+__all__ = ("Point", "Tile", "func")
